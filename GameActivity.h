@@ -11,6 +11,8 @@ private:
 	double rotateZ;
 	double playerX;
 	double playerY;
+	double acceleration;
+	double maxSpeed;
 	PlayerType1 player;
 
 public:

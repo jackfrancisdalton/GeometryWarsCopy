@@ -271,7 +271,7 @@ void PlayerType1::render()
 			glTranslated(0.0, powerORBTranslateY, 0.0);
 			glRotated(powerORBRotate,0.0, 0.0, 1);
 	
-			glBindTexture(GL_TEXTURE_2D, spikeBallTextureID);
+			glBindTexture(GL_TEXTURE_2D, playerTextureID);
 			glEnable(GL_TEXTURE_2D);
 			glEnable (GL_BLEND);
 			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -307,7 +307,7 @@ void PlayerType1::render()
 			
 			glScaled(scale, scale, 1.0);
 	
-			glBindTexture(GL_TEXTURE_2D, shieldTextureID);
+			glBindTexture(GL_TEXTURE_2D, playerTextureID);
 			glEnable(GL_TEXTURE_2D);
 			glEnable (GL_BLEND);
 			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -338,6 +338,9 @@ void PlayerType1::render()
 			glDisable(GL_TEXTURE_2D);
 		glPopMatrix();
 	glPopMatrix();
+
+	glRotated(-rotateZ,0.0, 0.0, 1);
+	glTranslated(-playerX, -playerY, 0.0);
 }
 
 void PlayerType1::onKeyUp(int key)										
