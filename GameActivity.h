@@ -1,37 +1,20 @@
-//
-// The structure of the Graphics 1 OpenGL template is explained in README.txt
-//
-
-// Ensure that this file can only be included once
 #pragma once
-
 #include "Activity.h"
-
-
-
-// GAME ACTIVITY
-// Renders a grid with a smiley face character.
-// WASD keys move the smiley face
-// ARROW keys move the camera/viewpoint
-
 
 class GameActivity : public Activity
 {
 private:
-	// GAME activity variables go here
-
-	// Camera position
 	double camX, camY;
-
-	// Player position
-	GLuint playerTextureID, shieldTextureID, shieldHitTextureID, spikeBallTextureID, healthIconTextureID;
+	GLuint playerSpirteSheetTextureID, playerTextureID, shieldTextureID, shieldHitTextureID, spikeBallTextureID, healthIconTextureID;
 	double playerX, playerY, rotateZ, attackZ, acceleration;
 	double powerORBRotate, powerORBTranslateY, powerORBSize;
 	double jumpStage;
 	double maxSpeed;
 	double shieldTime, shieldScale;
+	double playerX_spriteSheet_offset, playerY_spriteSheet_offset;
 	bool shieldOn, powerORBOn, boostOn;
 	bool jump, falling;
+	PlayerType1 player;
 
 public:
 	GameActivity(OpenGLApplication *app);
