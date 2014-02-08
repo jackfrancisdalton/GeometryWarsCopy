@@ -1,18 +1,3 @@
-//
-// The structure of the Graphics 1 OpenGL template is explained in README.txt
-//
-
-/*
-GameActivity implementation
-
-
-The comments in the file Activity.cpp give a little more info about each method
-
-This activity is where the main game logic goes.
-Most of your game code will go here
-*/
-
-
 #include <windows.h>		// Header File For Windows
 #include <gl\gl.h>		// Header File For The OpenGL32 Library
 #include <gl\glu.h>			// Header File For The GLu32 Library
@@ -21,52 +6,31 @@ Most of your game code will go here
 #include "SOIL.h"
 #include "OpenGLApplication.h"			// Needed to access member functions and variables from OpenGLApplication
 #include "GameActivity.h"
-#include "PlayerType1.h"
 
 #define VIEW_SIZE 30.0					// The height of the view in WORLD SPACE
-
-
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
-
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
-
-
 
 GameActivity::GameActivity(OpenGLApplication *app): Activity(app)	
 {
 	camX = camY = 0.0;
-	playerX = playerY = 0.0;
-	rotateZ = 0.0;
-	attackZ = 0.0;
-	acceleration = 0.0;
-	jump = false;
-	falling = false;
-	jumpStage = 1.0;
-	powerORBRotate = 0.0;
-	powerORBTranslateY = 2.0;
-	powerORBOn = false;
-	powerORBSize = 0.0;
-	shieldScale = 0.0;
-	shieldTime = 0.0;
-	shieldOn = false;
-	boostOn = false;
-	maxSpeed = 5;
+	playerY = 0.0;
+	playerX = 0.0;
 	playerX_spriteSheet_offset = 0.0;
 	playerY_spriteSheet_offset = 0.0;
-	player = new PlayerType1();
+	player = PlayerType1();
 }
 
 void GameActivity::initialise()
-{	
-		player.initialise();
-		playerSpirteSheetTextureID = SOIL_load_OGL_texture("sprite_sheet.png",		
-		SOIL_LOAD_AUTO,							
-		SOIL_CREATE_NEW_ID,										
-		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);					
-
+{					
 		healthIconTextureID = SOIL_load_OGL_texture("health_icon.png",		
+		SOIL_LOAD_AUTO,							 
+		SOIL_CREATE_NEW_ID,										
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
+		playerTextureID = SOIL_load_OGL_texture("super_player.png",		
 		SOIL_LOAD_AUTO,							 
 		SOIL_CREATE_NEW_ID,										
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -74,7 +38,7 @@ void GameActivity::initialise()
 
 void GameActivity::shutdown()
 {
-	glDeleteTextures(1, &playerTextureID);
+	glDeleteTextures(1, &healthIconTextureID);
 }
 
 void GameActivity::onSwitchIn()
@@ -84,17 +48,12 @@ void GameActivity::onSwitchIn()
 
 void GameActivity::onReshape(int width, int height)
 {
-	// If you need to do anything when the screen is resized, do it here
-
-	// EXAMPLE CODE
 	glViewport(0,0,width,height);						// Reset The Current Viewport
 
 	glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
 	glLoadIdentity();									// Reset The Projection Matrix
 
 	double aspect = app->getAspectRatio();
-	// The height of the visible area is defined by VIEW_SIZE. Split it half each way around the origin, hence the *0.5
-	// Take the aspect ratio into consideration when computing the width of the visible area
 	gluOrtho2D(-VIEW_SIZE*0.5*aspect, VIEW_SIZE*0.5*aspect,  -VIEW_SIZE*0.5, VIEW_SIZE*0.5);
 
 	glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
@@ -144,11 +103,11 @@ void GameActivity::render()
 	glDisable (GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
-
+	
 	//*******************************HUD ORB2
 	glPushMatrix();
 	glTranslated(14.0, -13.0, 1.0);
-	glBindTexture(GL_TEXTURE_2D, healthIconTextureID);
+	glBindTexture(GL_TEXTURE_2D, playerTextureID);
 	glEnable(GL_TEXTURE_2D);
 	glEnable (GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -208,18 +167,20 @@ void GameActivity::render()
 		glTexCoord2f(0, 1);
 		glVertex2f(-1, 1);
 	glEnd();
-	
+
 	glDisable (GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
-	glRotated(-rotateZ,0.0, 0.0, 1);
-	glTranslated(-playerX, -playerY, 0.0);
-	renderDebugGrid(-100.0, -100.0, 400.0, 400.0, 30, 30);
 
+	//glRotated(-rotateZ,0.0, 0.0, 1);
+	//glTranslated(-playerX, -playerY, 0.0);
+	renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);
+	
 	//***********************************************************STATIONARY ORB
+	
 	glPushMatrix();
 	glTranslated(0.0, 3.0, 0.9);
-	glBindTexture(GL_TEXTURE_2D, shieldTextureID);
+	glBindTexture(GL_TEXTURE_2D, healthIconTextureID);
 	glEnable(GL_TEXTURE_2D);
 	glEnable (GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -249,42 +210,9 @@ void GameActivity::render()
 	glDisable (GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
-
-	//********************************************************BACKGROUND
-	glBindTexture(GL_TEXTURE_2D, playerTextureID);
-	glEnable(GL_TEXTURE_2D);
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	glBegin(GL_TRIANGLES);
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		glTexCoord2f(0, 0);
-		glVertex2f(-1, -1);
-
-		glTexCoord2f(1, 0);
-		glVertex2f(1, -1);
-
-		glTexCoord2f(0, 1);
-		glVertex2f(-1, 1);
-
-		glTexCoord2f(1, 0);
-		glVertex2f(1, -1);
-
-		glTexCoord2f(1, 1);
-		glVertex2f(1, 1);
-
-		glTexCoord2f(0, 1);
-		glVertex2f(-1, 1);
-	glEnd();
-
-	glDisable (GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
-
 	//***********************************************************PLAYER
-	glPushMatrix();
-	player.render;
-	glPopMatrix();
+	player.render();
 	glFlush();
 }
 

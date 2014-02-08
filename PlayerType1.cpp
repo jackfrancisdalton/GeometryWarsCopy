@@ -18,7 +18,7 @@
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 #define SHIELD_GROWTH_RATE 1.0
 
-PlayerType1::PlayerType1(InputState *inputState)	
+PlayerType1::PlayerType1()
 {
 	playerX = 0.0;
 	playerY = 0.0;
@@ -87,6 +87,7 @@ void PlayerType1::onReshape(int width, int height)
 */
 void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputState) 
 {
+
 	//**************************************MOVEMENT
 	double playerDirSin = sin(DEG_2_RAD(-rotateZ)), playerDirCos = cos(DEG_2_RAD(-rotateZ));
 	if(inputState->isKeyPressed('W'))
@@ -229,39 +230,40 @@ void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputStat
 
 void PlayerType1::render()
 {
-	glTranslated(playerX, playerY, 1.0);
-	glRotated(rotateZ,0.0, 0.0, 1);
-	glScaled(jumpStage , jumpStage , 3.0);
+	glPushMatrix();
+		glTranslated(playerX, playerY, 1.0);
+		glRotated(rotateZ,0.0, 0.0, 1);
+		glScaled(jumpStage , jumpStage , 3.0);
 	
-	glBindTexture(GL_TEXTURE_2D, playerTextureID);
-	glEnable(GL_TEXTURE_2D);
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBindTexture(GL_TEXTURE_2D, playerTextureID);
+		glEnable(GL_TEXTURE_2D);
+		glEnable (GL_BLEND);
+		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	glBegin(GL_TRIANGLES);
-		glColor3f(1.0f, 1.0f, 1.0f);
+		glBegin(GL_TRIANGLES);
+			glColor3f(1.0f, 1.0f, 1.0f);
 
-		glTexCoord2f(0, 0);
-		glVertex2f(-2, -2);//bottom left
+			glTexCoord2f(0, 0);
+			glVertex2f(-2, -2);//bottom left
 
-		glTexCoord2f(1, 0);
-		glVertex2f(2, -2);//bottom right
+			glTexCoord2f(1, 0);
+			glVertex2f(2, -2);//bottom right
 
-		glTexCoord2f(0, 1);
-		glVertex2f(-2, 3.5);//top left
+			glTexCoord2f(0, 1);
+			glVertex2f(-2, 3.5);//top left
 
-		glTexCoord2f(1, 0);
-		glVertex2f(2, -2);//bottom right
+			glTexCoord2f(1, 0);
+			glVertex2f(2, -2);//bottom right
 
-		glTexCoord2f(1, 1);
-		glVertex2f(2, 3.5);//top right
+			glTexCoord2f(1, 1);
+			glVertex2f(2, 3.5);//top right
 
-		glTexCoord2f(0, 1);
-		glVertex2f(-2, 3.5);//top left
-	glEnd();
+			glTexCoord2f(0, 1);
+			glVertex2f(-2, 3.5);//top left
+		glEnd();
 
-	glDisable (GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
+		glDisable (GL_BLEND);
+		glDisable(GL_TEXTURE_2D);
 		//***********************************************************POWERUP SPIKEBALL 
 		glPushMatrix();
 			glScaled(powerORBSize, powerORBSize, 1.0);
@@ -340,7 +342,6 @@ void PlayerType1::render()
 
 void PlayerType1::onKeyUp(int key)										
 {
-	
 	if(key == '1') {
 		if (!shieldOn) {
 			shieldScale = 0.0;

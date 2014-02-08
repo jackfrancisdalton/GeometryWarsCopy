@@ -21,17 +21,15 @@ private:
 	bool shieldOn;
 	double shieldScale;
 	double powerORBTranslateY;
-	PlayerType1();
 
 public:
- 
-	PlayerType1(InputState *inputState);
+	PlayerType1();
 
 	virtual void initialise();											// Called on application start up
 	virtual void shutdown();											// Called on application shut down
 
 	virtual void onSwitchIn();											// Activity switch in; called when the activity changes and this one switches in
-	virtual void onReshape(int width, int height);						// called when the window is resized
+	//virtual void onReshape(int width, int height);						// called when the window is resized
 	virtual void update(double deltaT, double prevDeltaT, InputState *inputState);
 	virtual void render();												// Render function
 
