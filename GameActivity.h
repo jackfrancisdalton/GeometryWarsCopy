@@ -6,24 +6,19 @@ class GameActivity : public Activity
 {
 private:
 	double camX, camY;
+	PlayerType1 player;
 	GLuint healthIconTextureID, playerTextureID, spikeBallTextureID, shieldTextureID, shieldHitTextureID;
 	double playerX_spriteSheet_offset, playerY_spriteSheet_offset;
 	double rotateZ;
 	double playerX, playerY;
-	double acceleration, maxSpeed;
-	double shieldTime, shieldScale;
-	bool shieldOn;
-	double powerORBTranslateY;
-	bool attackZ, jump, boostOn, powerORBOn;
-	double powerORBSize, powerORBRotate;
-	double jumpStage, falling;
+	double cameraAcceleration, cameraMaxSpeed;
 
 public:
 	GameActivity(OpenGLApplication *app);
 	virtual void initialise();											// Called on application start up
 	virtual void shutdown();											// Called on application shut down
 
-	virtual void onSwitchIn();											// Activity switch in; called when the activity changes and this one switches in
+	virtual void onSwitchIn();								// Activity switch in; called when the activity changes and this one switches in
 	virtual void onReshape(int width, int height);						// called when the window is resized
 	virtual void update(double deltaT, double prevDeltaT);				// Update the application; if the current frame is frame number F, then the previous frame is F-1 and the one before that is F-2
 																		// deltaT is the time elapsed from frame F-1 to frame F, prevDeltaT is the time elapsed from F-2 to F-1
