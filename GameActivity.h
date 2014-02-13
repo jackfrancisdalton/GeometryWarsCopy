@@ -6,14 +6,17 @@ class GameActivity : public Activity
 {
 private:
 	double camX, camY;
-	GLuint healthIconTextureID, playerTextureID;
+	GLuint healthIconTextureID, playerTextureID, spikeBallTextureID, shieldTextureID, shieldHitTextureID;
 	double playerX_spriteSheet_offset, playerY_spriteSheet_offset;
 	double rotateZ;
-	double playerX;
-	double playerY;
-	double acceleration;
-	double maxSpeed;
-	PlayerType1 player;
+	double playerX, playerY;
+	double acceleration, maxSpeed;
+	double shieldTime, shieldScale;
+	bool shieldOn;
+	double powerORBTranslateY;
+	bool attackZ, jump, boostOn, powerORBOn;
+	double powerORBSize, powerORBRotate;
+	double jumpStage, falling;
 
 public:
 	GameActivity(OpenGLApplication *app);

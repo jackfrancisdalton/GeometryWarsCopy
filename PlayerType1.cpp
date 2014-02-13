@@ -46,7 +46,6 @@ void PlayerType1::initialise()
 		SOIL_CREATE_NEW_ID,										
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
-	
 	shieldTextureID = SOIL_load_OGL_texture("shield.png",		
 		SOIL_LOAD_AUTO,							 
 		SOIL_CREATE_NEW_ID,										
@@ -202,7 +201,7 @@ void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputStat
 	}
 
 	if(boostOn == true) {
-		maxSpeed = 6;
+		maxSpeed = 5;
 	}
 	if (boostOn == false) {
 		maxSpeed = 4;
