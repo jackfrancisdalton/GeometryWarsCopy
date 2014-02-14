@@ -11,8 +11,6 @@ private:
 	double jumpStage;
 	bool falling;
 	bool jump;
-	double maxSpeed;
-	double acceleration;
 	double shieldTime;
 	double powerORBRotate;
 	double attackZ;
@@ -21,9 +19,14 @@ private:
 	bool shieldOn;
 	double shieldScale;
 	double powerORBTranslateY;
+	double rotationSpeed;
+	double maxSpeed;
+	double acceleration;
+	
 
 public:
 	PlayerType1();
+	PlayerType1(int shipID);
 
 	virtual void initialise();											// Called on application start up
 	virtual void shutdown();											// Called on application shut down

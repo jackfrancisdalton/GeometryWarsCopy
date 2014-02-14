@@ -10,7 +10,6 @@
 #define VIEW_SIZE 30.0
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
-#define PLAYER_ROTATION_SPEED 100.0
 #define ROTATION_SPIKE_BALL_SPEED 220.0
 #define JUMP_HEIGHT 2.5
 #define SHIELD_OSCILATION_SPEED 1.5
@@ -23,14 +22,14 @@
 GameActivity::GameActivity(OpenGLApplication *app): Activity(app)	
 {
 	camX = camY = 0.0;
-
-	player = PlayerType1();
+	int skinID = 0;
 	playerY = playerX = 0.0;
 	rotateZ = 0.0;
 	cameraAcceleration = 0.0;
 	cameraMaxSpeed = 4.0;
+	rotationSpeed = 100.0;
 
-	rotateZ = 0.0;
+	player = PlayerType1();
 
 	playerX_spriteSheet_offset = 0.0;
 	playerY_spriteSheet_offset = 0.0;
@@ -44,6 +43,11 @@ void GameActivity::initialise()
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+}
+
+void GameActivity::setChosenShipID(int s)
+{
+	chosenShipID = s;
 }
 
 void GameActivity::shutdown()
@@ -72,9 +76,7 @@ void GameActivity::onReshape(int width, int height)
 
 void GameActivity::update(double deltaT, double prevDeltaT)
 {
-	
-	player.update(deltaT,prevDeltaT,inputState);
-	//**************************************MOVEMENT
+	//**************************************CAMERA
 	double playerDirSin = sin(DEG_2_RAD(-rotateZ)), playerDirCos = cos(DEG_2_RAD(-rotateZ));
 	if (inputState->isKeyPressed('W'))
 	{
@@ -112,12 +114,14 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 
 	if (inputState->isKeyPressed('D'))
 	{
-		rotateZ -= PLAYER_ROTATION_SPEED * deltaT;
+		rotateZ -= rotationSpeed * deltaT;
 	}
 	if (inputState->isKeyPressed('A'))
 	{
-		rotateZ += PLAYER_ROTATION_SPEED * deltaT;
+		rotateZ += rotationSpeed * deltaT;
 	}
+
+	player.update(deltaT, prevDeltaT, inputState);
 }
 
 void GameActivity::render()
@@ -228,6 +232,7 @@ void GameActivity::render()
 	glPopMatrix();
 
 	//*************************************************************CAMERA CONTROLS
+	
 	glRotated(-rotateZ,0.0, 0.0, 1);
 	glTranslated(-playerX, -playerY, 0.0);
 	renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);

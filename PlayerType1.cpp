@@ -8,7 +8,7 @@
 
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
-#define PLAYER_ROTATION_SPEED 100.0
+
 #define ROTATION_SPIKE_BALL_SPEED 220.0
 #define JUMP_HEIGHT 2.5
 #define SHIELD_OSCILATION_SPEED 1.5
@@ -27,11 +27,44 @@ PlayerType1::PlayerType1()
 	jumpStage = 1.0;
 	falling = false;
 	jump = false;
-	maxSpeed = 5.0;
-	acceleration = 0.0;
 	shieldTime = 0.0;
 	powerORBRotate = 0.0;
 	attackZ = 0.0;
+	rotationSpeed = 100;
+	maxSpeed = 0.0;
+	acceleration = 0.0;
+	rotateZ = 0.0;
+}
+
+PlayerType1::PlayerType1(int shipID)
+{
+	playerX = 0.0;
+	playerY = 0.0;
+	rotateZ = 0.0;
+	boostOn = false;
+	jumpStage = 1.0;
+	falling = false;
+	jump = false;
+	shieldTime = 0.0;
+	powerORBRotate = 0.0;
+	attackZ = 0.0;
+	maxSpeed = 5.0;
+	acceleration = 0.0;
+	rotationSpeed = 100;
+	rotateZ = 0.0;
+	/*
+	if (shipID == 1) {
+		rotationSpeed = 1;
+	}
+	else if(shipID == 2) {
+		rotationSpeed = 2;
+	} 
+	else {
+		rotationSpeed = 3;
+	}
+	*/
+
+
 }
 
 void PlayerType1::initialise()
@@ -68,7 +101,7 @@ void PlayerType1::onSwitchIn()
 	glClearColor(0.0,0.0,0.0,0.0);						
 }
 
-void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputState) 
+void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputState)
 {
 	//**************************************MOVEMENT
 	double playerDirSin = sin(DEG_2_RAD(-rotateZ)), playerDirCos = cos(DEG_2_RAD(-rotateZ));
@@ -103,16 +136,17 @@ void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputStat
 			}
 		}
 	}
+
 	playerX += playerDirSin * PLAYER_MOVEMENT_SPEED * deltaT * acceleration;
 	playerY += playerDirCos * PLAYER_MOVEMENT_SPEED * deltaT * acceleration;
 
 	if(inputState->isKeyPressed('D'))
 	{
-		rotateZ -= PLAYER_ROTATION_SPEED * deltaT;
+		rotateZ -= rotationSpeed * deltaT;
 	}
 	if(inputState->isKeyPressed('A'))
 	{
-		rotateZ += PLAYER_ROTATION_SPEED * deltaT;
+		rotateZ += rotationSpeed * deltaT;
 	}
 	if(inputState->isKeyPressed('Q'))
 	{
@@ -125,11 +159,10 @@ void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputStat
 		playerY += -playerDirSin * PLAYER_MOVEMENT_SPEED * deltaT;
 	}
 
-
 	//**************************************ATTACK AND BOOST
 	if(inputState->isKeyPressed('F'))
 	{
-		attackZ += PLAYER_ROTATION_SPEED * deltaT;
+		attackZ += rotationSpeed * deltaT;
 	}
 	if(inputState->isKeyPressed(' ')) 
 	{

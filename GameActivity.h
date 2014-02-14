@@ -12,12 +12,15 @@ private:
 	double rotateZ;
 	double playerX, playerY;
 	double cameraAcceleration, cameraMaxSpeed;
+	double rotationSpeed;
+	int chosenShipID;
 
 public:
 	GameActivity(OpenGLApplication *app);
+
 	virtual void initialise();											// Called on application start up
 	virtual void shutdown();											// Called on application shut down
-
+	virtual void setChosenShipID(int shipID);
 	virtual void onSwitchIn();								// Activity switch in; called when the activity changes and this one switches in
 	virtual void onReshape(int width, int height);						// called when the window is resized
 	virtual void update(double deltaT, double prevDeltaT);				// Update the application; if the current frame is frame number F, then the previous frame is F-1 and the one before that is F-2
