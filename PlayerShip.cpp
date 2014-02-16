@@ -8,7 +8,7 @@
 
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
-#define ROTATION_SPIKE_BALL_SPEED 220.0
+#define ROTATION_SPIKE_BALL_SPEED 500.0
 #define JUMP_HEIGHT 2.5
 #define SHIELD_OSCILATION_SPEED 1.5
 #define SHIELD_GROWTH_RATE 1.0
@@ -45,17 +45,25 @@ PlayerShip::PlayerShip(int shipID)
 	jumpStage = 1.0;
 	falling = false;
 	jump = false;
+	shieldOn = false;
 	shieldTime = 0.0;
-	powerORBRotate = 0.0;
+	shieldScale = 0.0;
+
+	powerORBSize = 0.0;
+	powerORBMaxSize = 2.0;
+	powerORBTranslateY = 2.0;
 	attackZ = 0.0;
-	maxSpeed = defaultMaxSpeed = 5.0;
+	maxSpeed = defaultMaxSpeed = 6.0;
 	currentSpeed = 0.0;
-	rotationSpeed = 100;
+	rotationSpeed = 150;
 	rotateZ = 0.0;
 	acceleration = 0.009;
+	decceleration = 0.012;
 	shipChoice = shipID;
 	rocketFlamesScaleY = 0.0;
 	rocketFlamesScaleX = 0.0;
+	powerORBOn = false;
+	boostOn = false;
 
 	if (shipChoice == 1) {
 		rotationSpeed = 500;
@@ -143,24 +151,24 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 		}
 		if (rocketFlamesScaleY < 1.0)
 		{
-			rocketFlamesScaleY += 0.002;
+			rocketFlamesScaleY += 0.006;
 		}
 		if (rocketFlamesScaleX < 1.0)
 		{
-			rocketFlamesScaleX += 0.002;
+			rocketFlamesScaleX += 0.006;
 		}
 	}
 	else if(inputState->isKeyPressed('S'))
 	{
 		if (currentSpeed > -maxSpeed) {
-			currentSpeed -= acceleration;
+			currentSpeed -= decceleration;
 		}
 	}
 	else
 	{
 		if (currentSpeed > 0)
 		{
-			currentSpeed -= 0.002;
+			currentSpeed -= decceleration;
 			if (currentSpeed < 0)
 			{
 				currentSpeed = 0;
@@ -168,7 +176,7 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 		}
 		else if (currentSpeed <= 0)
 		{
-			currentSpeed += 0.002;
+			currentSpeed += decceleration;
 			if (currentSpeed > 0)
 			{
 				currentSpeed = 0;
@@ -211,16 +219,20 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 	{
 		attackZ += rotationSpeed * deltaT;
 	}
-	if(inputState->isKeyPressed(' ')) 
-	{
-		jump = true;
+
+	if (boostOn == true) {
+		maxSpeed = 10;
 	}
-	if(inputState->isKeyPressed('L')) 
-	{
-		boostOn = !boostOn;
+
+	if (boostOn == false) {
+		maxSpeed = defaultMaxSpeed;
 	}
 
 	//***************************************JUMPING
+	if (inputState->isKeyPressed(' '))
+	{
+		jump = true;
+	}
 	if ( jump == true) //is jumping
 	{
 		if ( jumpStage < JUMP_HEIGHT) //is before apex
@@ -236,7 +248,7 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 			
 			else if (falling == true) //is coming back down
 			{
-				jumpStage = jumpStage - 0.0005;
+				jumpStage = jumpStage - 0.003;
 				if ( jumpStage < 1.001 ) 
 				{
 					jumpStage = 1;
@@ -250,7 +262,7 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 	//*****************************************************POWER UPS
 	if(powerORBOn == true) {
 		powerORBRotate += (ROTATION_SPIKE_BALL_SPEED * deltaT);
-		if (powerORBSize < 1.0) {
+		if (powerORBSize < powerORBMaxSize) {
 			powerORBSize += 0.001;
 		}
 	}
@@ -262,17 +274,10 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 			powerORBRotate = 0.0;
 		}
 	}
-
-	if(boostOn == true) {
-		maxSpeed = 6;
-	}
-	if (boostOn == false) {
-		maxSpeed = defaultMaxSpeed;
-	}
 	
 	shieldTime += (SHIELD_OSCILATION_SPEED * deltaT );
 
-	if (shieldOn) {
+	if (shieldOn == true) {
 		if (shieldScale < 1.0) {
 			shieldScale += SHIELD_GROWTH_RATE * deltaT;
 			if (shieldScale > 1.0) {
@@ -312,21 +317,20 @@ void PlayerShip::render()
 		glVertex2f(2, -2);//bottom right
 
 		glTexCoord2f(0, 1);
-		glVertex2f(-2, 3.5);//top left
+		glVertex2f(-2, 4);//top left
 
 		glTexCoord2f(1, 0);
 		glVertex2f(2, -2);//bottom right
 
 		glTexCoord2f(1, 1);
-		glVertex2f(2, 3.5);//top right
+		glVertex2f(2, 4);//top right
 
 		glTexCoord2f(0, 1);
-		glVertex2f(-2, 3.5);//top left
+		glVertex2f(-2, 4);//top left
 		glEnd();
 
 		glDisable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
-
 
 		//Booster 1
 		glPushMatrix();
@@ -343,22 +347,22 @@ void PlayerShip::render()
 			glColor3f(1.0f, 1.0f, 1.0f);
 
 			glTexCoord2f(0, 0);
-			glVertex2f(-1, -1);
+			glVertex2f(-0.6, -1);
 
 			glTexCoord2f(1, 0);
-			glVertex2f(1, -1);
+			glVertex2f(0.6, -1);
 
 			glTexCoord2f(0, 1);
-			glVertex2f(-1, 1);
+			glVertex2f(-0.6, 1);
 
 			glTexCoord2f(1, 0);
-			glVertex2f(1, -1);
+			glVertex2f(0.6, -1);
 
 			glTexCoord2f(1, 1);
-			glVertex2f(1, 1);
+			glVertex2f(0.6, 1);
 
 			glTexCoord2f(0, 1);
-			glVertex2f(-1, 1);
+			glVertex2f(-0.6, 1);
 			glEnd();
 
 			glDisable(GL_BLEND);
@@ -380,31 +384,31 @@ void PlayerShip::render()
 			glColor3f(1.0f, 1.0f, 1.0f);
 
 			glTexCoord2f(0, 0);
-			glVertex2f(-1, -1);
+			glVertex2f(-0.6, -1);
 
 			glTexCoord2f(1, 0);
-			glVertex2f(1, -1);
+			glVertex2f(0.6, -1);
 
 			glTexCoord2f(0, 1);
-			glVertex2f(-1, 1);
+			glVertex2f(-0.6, 1);
 
 			glTexCoord2f(1, 0);
-			glVertex2f(1, -1);
+			glVertex2f(0.6, -1);
 
 			glTexCoord2f(1, 1);
-			glVertex2f(1, 1);
+			glVertex2f(0.6, 1);
 
 			glTexCoord2f(0, 1);
-			glVertex2f(-1, 1);
+			glVertex2f(-0.6, 1);
 			glEnd();
 
 			glDisable(GL_BLEND);
 			glDisable(GL_TEXTURE_2D);
 		glPopMatrix();
-		/***********************************************************POWERUP SPIKEBALL 
+		//***********************************************************POWERUP SPIKEBALL 
+
 		glPushMatrix();
 			glScaled(powerORBSize, powerORBSize, 1.0);
-			glRotated(powerORBRotate, 0.0, 0.0, 1);
 			glTranslated(0.0, powerORBTranslateY, 0.0);
 			glRotated(powerORBRotate, 0.0, 0.0, 1);
 
@@ -438,9 +442,10 @@ void PlayerShip::render()
 			glDisable(GL_BLEND);
 			glDisable(GL_TEXTURE_2D);
 		glPopMatrix();
+		
 		//*************************************************SHEILD
 		glPushMatrix();
-			float scale = (2 + sin(shieldTime * 4) / 3.0f) * shieldScale;
+			float scale = (2 + sin(shieldTime * 4) / 5.0f) * shieldScale;
 
 			glScaled(scale, scale, 1.0);
 
@@ -453,49 +458,50 @@ void PlayerShip::render()
 			glColor3f(1.0f, 1.0f, 1.0f);
 
 			glTexCoord2f(0, 0);
-			glVertex2f(-1, -1);
+			glVertex2f(-1.5, -1.8);
 
 			glTexCoord2f(1, 0);
-			glVertex2f(1, -1);
+			glVertex2f(1.5, -1.8);
 
 			glTexCoord2f(0, 1);
-			glVertex2f(-1, 1);
+			glVertex2f(-1.5, 2.8);
 
 			glTexCoord2f(1, 0);
-			glVertex2f(1, -1);
+			glVertex2f(1.5, -1.8);
 
 			glTexCoord2f(1, 1);
-			glVertex2f(1, 1);
+			glVertex2f(1.5, 2.8);
 
 			glTexCoord2f(0, 1);
-			glVertex2f(-1, 1);
+			glVertex2f(-1.5, 2.8);
 			glEnd();
 
 			glDisable(GL_BLEND);
 			glDisable(GL_TEXTURE_2D);
 		glPopMatrix();
-		*/
+		
 	glPopMatrix();
 }
 
-void PlayerShip::onKeyUp(int key)
+void PlayerShip::shieldToggle() {
+	if (!shieldOn) {
+		shieldScale = 0.0;
+		shieldTime = 0.0;
+		shieldOn = true;
+	}
+	else {
+		shieldOn = false;
+	}
+}
+
+void PlayerShip::powerBallToggle() {
+	powerORBOn = !powerORBOn;
+}
+
+void PlayerShip::boostToggle()
 {
-	if(key == '1') {
-		if (!shieldOn) {
-			shieldScale = 0.0;
-			shieldTime = 0.0;
-			shieldOn = true;
-		}
-		else {
-			shieldOn = false;
-		}
-	}
-	if (key == '2') {
-		powerORBOn = !powerORBOn;
-	}
-	if(key =='3') 
-	{
-		
-		shieldTextureID = shieldHitTextureID;
+	boostOn = !boostOn;
+	if (boostOn == false) {
+		currentSpeed = defaultMaxSpeed;
 	}
 }

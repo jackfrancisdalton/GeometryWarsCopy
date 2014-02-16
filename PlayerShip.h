@@ -15,13 +15,13 @@ private:
 	double powerORBRotate;
 	double attackZ;
 	bool powerORBOn;
-	double powerORBSize;
+	double powerORBSize, powerORBMaxSize;
 	bool shieldOn;
 	double shieldScale;
 	double powerORBTranslateY;
 	double rotationSpeed;
 	double maxSpeed, defaultMaxSpeed;
-	double currentSpeed, acceleration;
+	double currentSpeed, acceleration, decceleration;
 	int shipChoice;
 	double rocketFlamesScaleY;
 	double rocketFlamesScaleX;
@@ -30,6 +30,9 @@ public:
 	PlayerShip();
 	PlayerShip(int shipID);
 
+	virtual void powerBallToggle();
+	virtual void boostToggle();
+	virtual void shieldToggle();
 	virtual double getPlayerRot();
 	virtual double getPlayerX();
 	virtual double getPlayerY();
@@ -38,5 +41,4 @@ public:
 	virtual void onSwitchIn();											// Activity switch in; called when the activity changes and this one switches in
 	virtual void update(double deltaT, double prevDeltaT, InputState *inputState);
 	virtual void render();												// Render function
-	virtual void onKeyUp(int key);										// Called when key released
 };

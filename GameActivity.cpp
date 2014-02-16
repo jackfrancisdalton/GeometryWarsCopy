@@ -11,7 +11,6 @@
 #define VIEW_SIZE 50.0
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
-#define ROTATION_SPIKE_BALL_SPEED 220.0
 #define JUMP_HEIGHT 2.5
 #define SHIELD_OSCILATION_SPEED 1.5
 #ifndef M_PI
@@ -249,9 +248,19 @@ void GameActivity::onKeyDown(int key)
 	{
 		// F1; switch to end screen activity
 		app->setCurrentActivity(app->endScreen);
-	}else if (key == VK_RETURN) {
+	}
+	else if (key == VK_RETURN) {
 
 		app->setCurrentActivity(app->pauseScreen);
+	}
+	else if (key == '1') {
+		player.shieldToggle();
+	}
+	else if (key == '2') {
+		player.powerBallToggle();
+	}
+	else if (key == '3') {
+		player.boostToggle();
 	}
 }
 
