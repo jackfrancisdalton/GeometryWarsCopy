@@ -1,12 +1,12 @@
 #pragma once
 #include "Activity.h"
-#include "PlayerType1.h"
+#include "PlayerShip.h"
 
 class GameActivity : public Activity
 {
 private:
 	double camX, camY, camRot;
-	PlayerType1 player;
+	PlayerShip player;
 	GLuint healthIconTextureID, playerTextureID, spikeBallTextureID, shieldTextureID, shieldHitTextureID;
 	int chosenShipID;
 

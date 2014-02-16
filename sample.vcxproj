@@ -19,7 +19,7 @@
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="OpenGLApplication.cpp" />
     <ClCompile Include="PauseScreenActivity.cpp" />
-    <ClCompile Include="PlayerType1.cpp" />
+    <ClCompile Include="PlayerShip.cpp" />
     <ClCompile Include="SelectScreenActivity.cpp" />
     <ClCompile Include="SOIL.c" />
     <ClCompile Include="StartScreenActivity.cpp" />
@@ -35,7 +35,7 @@
     <ClInclude Include="InputState.h" />
     <ClInclude Include="OpenGLApplication.h" />
     <ClInclude Include="PauseScreenActivity.h" />
-    <ClInclude Include="PlayerType1.h" />
+    <ClInclude Include="PlayerShip.h" />
     <ClInclude Include="SelectScreenActivity.h" />
     <ClInclude Include="SOIL.h" />
     <ClInclude Include="StartScreenActivity.h" />

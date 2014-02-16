@@ -24,13 +24,13 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 {
 	camX = camY = camRot = 0.0;
 	int skinID = 0;
-	player = PlayerType1(3);
+	player = PlayerShip(2);
 }
 
 void GameActivity::initialise()
 {
-	AllocConsole();
-	freopen("CONOUT$","w",stdout);
+	//AllocConsole();
+	//freopen("CONOUT$","w",stdout);
 	player.initialise();
 
 	healthIconTextureID = SOIL_load_OGL_texture("health_icon.png",

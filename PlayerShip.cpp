@@ -4,7 +4,7 @@
 #include <math.h>
 #include "SOIL.h"
 #include "OpenGLApplication.h"		
-#include "PlayerType1.h"
+#include "PlayerShip.h"
 
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
@@ -17,7 +17,7 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 
-PlayerType1::PlayerType1()
+PlayerShip::PlayerShip()
 {
 	playerX = 0.0;
 	playerY = 0.0;
@@ -36,7 +36,7 @@ PlayerType1::PlayerType1()
 	acceleration = 0.003;
 }
 
-PlayerType1::PlayerType1(int shipID)
+PlayerShip::PlayerShip(int shipID)
 {
 	playerX = 0.0;
 	playerY = 0.0;
@@ -54,6 +54,8 @@ PlayerType1::PlayerType1(int shipID)
 	rotateZ = 0.0;
 	acceleration = 0.009;
 	shipChoice = shipID;
+	rocketFlamesScaleY = 0.0;
+	rocketFlamesScaleX = 0.0;
 
 	if (shipChoice == 1) {
 		rotationSpeed = 500;
@@ -66,7 +68,7 @@ PlayerType1::PlayerType1(int shipID)
 	}
 }
 
-void PlayerType1::initialise()
+void PlayerShip::initialise()
 {
 	if (shipChoice == 1) {
 		playerTextureID = SOIL_load_OGL_texture("playerSkin1.png",
@@ -92,6 +94,11 @@ void PlayerType1::initialise()
 		SOIL_CREATE_NEW_ID,										
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
+	rocketBooster = SOIL_load_OGL_texture("rocketBooster.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
 	shieldTextureID = SOIL_load_OGL_texture("shield.png",		
 		SOIL_LOAD_AUTO,							 
 		SOIL_CREATE_NEW_ID,										
@@ -103,36 +110,44 @@ void PlayerType1::initialise()
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 }
 
-double PlayerType1::getPlayerRot() {
+double PlayerShip::getPlayerRot() {
 	return rotateZ;
 }
 
-double PlayerType1::getPlayerX() {
+double PlayerShip::getPlayerX() {
 	return playerX;
 }
 
-double PlayerType1::getPlayerY() {
+double PlayerShip::getPlayerY() {
 	return playerY;
 }
 
-void PlayerType1::shutdown()
+void PlayerShip::shutdown()
 {
 	glDeleteTextures(1, &playerTextureID);
 }
 
-void PlayerType1::onSwitchIn()
+void PlayerShip::onSwitchIn()
 {
 	glClearColor(0.0,0.0,0.0,0.0);						
 }
 
-void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputState)
+void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState)
 {
-	//**************************************MOVEMENT
 	double playerDirSin = sin(DEG_2_RAD(-rotateZ)), playerDirCos = cos(DEG_2_RAD(-rotateZ));
+
 	if(inputState->isKeyPressed('W'))
 	{
 		if (currentSpeed < maxSpeed) {
 			currentSpeed += acceleration;
+		}
+		if (rocketFlamesScaleY < 1.0)
+		{
+			rocketFlamesScaleY += 0.002;
+		}
+		if (rocketFlamesScaleX < 1.0)
+		{
+			rocketFlamesScaleX += 0.002;
 		}
 	}
 	else if(inputState->isKeyPressed('S'))
@@ -145,7 +160,7 @@ void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputStat
 	{
 		if (currentSpeed > 0)
 		{
-			currentSpeed -= 0.003;
+			currentSpeed -= 0.002;
 			if (currentSpeed < 0)
 			{
 				currentSpeed = 0;
@@ -153,11 +168,19 @@ void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputStat
 		}
 		else if (currentSpeed <= 0)
 		{
-			currentSpeed += 0.003;
+			currentSpeed += 0.002;
 			if (currentSpeed > 0)
 			{
 				currentSpeed = 0;
 			}
+		}
+		if (rocketFlamesScaleY > 0.0)
+		{
+			rocketFlamesScaleY -= 0.006;
+		}
+		if (rocketFlamesScaleX > 0.0)
+		{
+			rocketFlamesScaleX -= 0.006;
 		}
 	}
 
@@ -267,10 +290,10 @@ void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputStat
 	}
 }
 
-void PlayerType1::render()
+void PlayerShip::render()
 {
 	glPushMatrix();
-		glTranslated(playerX, playerY, 1.0);
+		glTranslated(playerX, playerY, 0.0);
 		glRotated(rotateZ, 0.0, 0.0, 1);
 		glScaled(jumpStage, jumpStage, 3.0);
 
@@ -303,7 +326,82 @@ void PlayerType1::render()
 
 		glDisable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
-		//***********************************************************POWERUP SPIKEBALL 
+
+
+		//Booster 1
+		glPushMatrix();
+			
+			glTranslated(-0.8,-2.6,0.0);
+			glScaled(rocketFlamesScaleX, rocketFlamesScaleY, 1.0);
+
+			glBindTexture(GL_TEXTURE_2D, rocketBooster);
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glBegin(GL_TRIANGLES);
+			glColor3f(1.0f, 1.0f, 1.0f);
+
+			glTexCoord2f(0, 0);
+			glVertex2f(-1, -1);
+
+			glTexCoord2f(1, 0);
+			glVertex2f(1, -1);
+
+			glTexCoord2f(0, 1);
+			glVertex2f(-1, 1);
+
+			glTexCoord2f(1, 0);
+			glVertex2f(1, -1);
+
+			glTexCoord2f(1, 1);
+			glVertex2f(1, 1);
+
+			glTexCoord2f(0, 1);
+			glVertex2f(-1, 1);
+			glEnd();
+
+			glDisable(GL_BLEND);
+			glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
+
+		//Booster 2
+		glPushMatrix();
+
+			glTranslated(0.6, -2.6, 0.0);
+			glScaled(rocketFlamesScaleX, rocketFlamesScaleY, 1.0);
+
+			glBindTexture(GL_TEXTURE_2D, rocketBooster);
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glBegin(GL_TRIANGLES);
+			glColor3f(1.0f, 1.0f, 1.0f);
+
+			glTexCoord2f(0, 0);
+			glVertex2f(-1, -1);
+
+			glTexCoord2f(1, 0);
+			glVertex2f(1, -1);
+
+			glTexCoord2f(0, 1);
+			glVertex2f(-1, 1);
+
+			glTexCoord2f(1, 0);
+			glVertex2f(1, -1);
+
+			glTexCoord2f(1, 1);
+			glVertex2f(1, 1);
+
+			glTexCoord2f(0, 1);
+			glVertex2f(-1, 1);
+			glEnd();
+
+			glDisable(GL_BLEND);
+			glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
+		/***********************************************************POWERUP SPIKEBALL 
 		glPushMatrix();
 			glScaled(powerORBSize, powerORBSize, 1.0);
 			glRotated(powerORBRotate, 0.0, 0.0, 1);
@@ -376,10 +474,11 @@ void PlayerType1::render()
 			glDisable(GL_BLEND);
 			glDisable(GL_TEXTURE_2D);
 		glPopMatrix();
+		*/
 	glPopMatrix();
 }
 
-void PlayerType1::onKeyUp(int key)										
+void PlayerShip::onKeyUp(int key)
 {
 	if(key == '1') {
 		if (!shieldOn) {

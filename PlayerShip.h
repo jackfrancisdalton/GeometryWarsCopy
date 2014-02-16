@@ -1,9 +1,9 @@
 #include <gl/gl.h>			
 
-class PlayerType1 
+class PlayerShip
 {
 private:
-	GLuint playerTextureID, spikeBallTextureID, shieldTextureID, shieldHitTextureID;
+	GLuint playerTextureID, rocketBooster, spikeBallTextureID, shieldTextureID, shieldHitTextureID;
 	double playerX;
 	double playerY;
 	double rotateZ;
@@ -23,11 +23,12 @@ private:
 	double maxSpeed, defaultMaxSpeed;
 	double currentSpeed, acceleration;
 	int shipChoice;
-	
+	double rocketFlamesScaleY;
+	double rocketFlamesScaleX;
 
 public:
-	PlayerType1();
-	PlayerType1(int shipID);
+	PlayerShip();
+	PlayerShip(int shipID);
 
 	virtual double getPlayerRot();
 	virtual double getPlayerX();
