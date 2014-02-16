@@ -20,14 +20,18 @@ private:
 	double shieldScale;
 	double powerORBTranslateY;
 	double rotationSpeed;
-	double maxSpeed;
-	double acceleration;
+	double maxSpeed, defaultMaxSpeed;
+	double currentSpeed, acceleration;
+	int shipChoice;
 	
 
 public:
 	PlayerType1();
 	PlayerType1(int shipID);
 
+	virtual double getPlayerRot();
+	virtual double getPlayerX();
+	virtual double getPlayerY();
 	virtual void initialise();											// Called on application start up
 	virtual void shutdown();											// Called on application shut down
 	virtual void onSwitchIn();											// Activity switch in; called when the activity changes and this one switches in

@@ -8,7 +8,6 @@
 
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
-
 #define ROTATION_SPIKE_BALL_SPEED 220.0
 #define JUMP_HEIGHT 2.5
 #define SHIELD_OSCILATION_SPEED 1.5
@@ -31,9 +30,10 @@ PlayerType1::PlayerType1()
 	powerORBRotate = 0.0;
 	attackZ = 0.0;
 	rotationSpeed = 100;
-	maxSpeed = 0.0;
-	acceleration = 0.0;
+	maxSpeed = defaultMaxSpeed = 5.0;
+	currentSpeed = 0.0;
 	rotateZ = 0.0;
+	acceleration = 0.003;
 }
 
 PlayerType1::PlayerType1(int shipID)
@@ -48,32 +48,45 @@ PlayerType1::PlayerType1(int shipID)
 	shieldTime = 0.0;
 	powerORBRotate = 0.0;
 	attackZ = 0.0;
-	maxSpeed = 5.0;
-	acceleration = 0.0;
+	maxSpeed = defaultMaxSpeed = 5.0;
+	currentSpeed = 0.0;
 	rotationSpeed = 100;
 	rotateZ = 0.0;
-	/*
-	if (shipID == 1) {
-		rotationSpeed = 1;
-	}
-	else if(shipID == 2) {
-		rotationSpeed = 2;
-	} 
-	else {
-		rotationSpeed = 3;
-	}
-	*/
+	acceleration = 0.009;
+	shipChoice = shipID;
 
-
+	if (shipChoice == 1) {
+		rotationSpeed = 500;
+	}
+	else if(shipChoice == 2) {
+		acceleration = 0.02;
+	}
+	else if (shipChoice == 3) {
+		defaultMaxSpeed = 20.0;
+	}
 }
 
 void PlayerType1::initialise()
 {
-	playerTextureID = SOIL_load_OGL_texture("super_player.png",		
-		SOIL_LOAD_AUTO,											
-		SOIL_CREATE_NEW_ID,										
-		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);	
-
+	if (shipChoice == 1) {
+		playerTextureID = SOIL_load_OGL_texture("playerSkin1.png",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+	}
+	else if (shipChoice == 2) {
+		playerTextureID = SOIL_load_OGL_texture("playerSkin2.png",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+	}
+	else {
+		playerTextureID = SOIL_load_OGL_texture("playerSkin3.png",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+	}
+		
 	spikeBallTextureID = SOIL_load_OGL_texture("spike_ball.png",		
 		SOIL_LOAD_AUTO,							 
 		SOIL_CREATE_NEW_ID,										
@@ -90,6 +103,17 @@ void PlayerType1::initialise()
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 }
 
+double PlayerType1::getPlayerRot() {
+	return rotateZ;
+}
+
+double PlayerType1::getPlayerX() {
+	return playerX;
+}
+
+double PlayerType1::getPlayerY() {
+	return playerY;
+}
 
 void PlayerType1::shutdown()
 {
@@ -107,38 +131,38 @@ void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputStat
 	double playerDirSin = sin(DEG_2_RAD(-rotateZ)), playerDirCos = cos(DEG_2_RAD(-rotateZ));
 	if(inputState->isKeyPressed('W'))
 	{
-		if (acceleration < maxSpeed) {
-			acceleration += 0.001;
+		if (currentSpeed < maxSpeed) {
+			currentSpeed += acceleration;
 		}
 	}
 	else if(inputState->isKeyPressed('S'))
 	{
-		if (acceleration > -maxSpeed) {
-			acceleration -= 0.001;
+		if (currentSpeed > -maxSpeed) {
+			currentSpeed -= acceleration;
 		}
 	}
 	else
 	{
-		if (acceleration > 0)
+		if (currentSpeed > 0)
 		{
-			acceleration -= 0.003;
-			if (acceleration < 0)
+			currentSpeed -= 0.003;
+			if (currentSpeed < 0)
 			{
-				acceleration = 0;
+				currentSpeed = 0;
 			}
 		}
-		else if ( acceleration <= 0)
+		else if (currentSpeed <= 0)
 		{
-			acceleration += 0.003;
-			if (acceleration > 0)
+			currentSpeed += 0.003;
+			if (currentSpeed > 0)
 			{
-				acceleration = 0;
+				currentSpeed = 0;
 			}
 		}
 	}
 
-	playerX += playerDirSin * PLAYER_MOVEMENT_SPEED * deltaT * acceleration;
-	playerY += playerDirCos * PLAYER_MOVEMENT_SPEED * deltaT * acceleration;
+	playerX += playerDirSin * PLAYER_MOVEMENT_SPEED * deltaT * currentSpeed;
+	playerY += playerDirCos * PLAYER_MOVEMENT_SPEED * deltaT * currentSpeed;
 
 	if(inputState->isKeyPressed('D'))
 	{
@@ -220,7 +244,7 @@ void PlayerType1::update(double deltaT, double prevDeltaT, InputState *inputStat
 		maxSpeed = 6;
 	}
 	if (boostOn == false) {
-		maxSpeed = 4;
+		maxSpeed = defaultMaxSpeed;
 	}
 	
 	shieldTime += (SHIELD_OSCILATION_SPEED * deltaT );

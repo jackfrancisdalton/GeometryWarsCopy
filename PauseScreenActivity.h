@@ -30,5 +30,5 @@ public:
 	virtual void onReshape(int width, int height);						// called when the window is resized
 	virtual void render();												// Render function
 
-	virtual void onKeyUp(int key);										// Called when key released
+	virtual void onKeyDown(int key);										// Called when key released
 };

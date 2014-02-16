@@ -6,8 +6,9 @@
 #include "SOIL.h"
 #include "OpenGLApplication.h"			// Needed to access member functions and variables from OpenGLApplication
 #include "GameActivity.h"
+#include <iostream>
 
-#define VIEW_SIZE 30.0
+#define VIEW_SIZE 50.0
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
 #define ROTATION_SPIKE_BALL_SPEED 220.0
@@ -21,33 +22,21 @@
 
 GameActivity::GameActivity(OpenGLApplication *app): Activity(app)	
 {
-	camX = camY = 0.0;
+	camX = camY = camRot = 0.0;
 	int skinID = 0;
-	playerY = playerX = 0.0;
-	rotateZ = 0.0;
-	cameraAcceleration = 0.0;
-	cameraMaxSpeed = 4.0;
-	rotationSpeed = 100.0;
-
-	player = PlayerType1();
-
-	playerX_spriteSheet_offset = 0.0;
-	playerY_spriteSheet_offset = 0.0;
+	player = PlayerType1(3);
 }
 
 void GameActivity::initialise()
 {
+	AllocConsole();
+	freopen("CONOUT$","w",stdout);
 	player.initialise();
 
 	healthIconTextureID = SOIL_load_OGL_texture("health_icon.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-}
-
-void GameActivity::setChosenShipID(int s)
-{
-	chosenShipID = s;
 }
 
 void GameActivity::shutdown()
@@ -76,52 +65,10 @@ void GameActivity::onReshape(int width, int height)
 
 void GameActivity::update(double deltaT, double prevDeltaT)
 {
-	//**************************************CAMERA
-	double playerDirSin = sin(DEG_2_RAD(-rotateZ)), playerDirCos = cos(DEG_2_RAD(-rotateZ));
-	if (inputState->isKeyPressed('W'))
-	{
-		if (cameraAcceleration < cameraMaxSpeed) {
-			cameraAcceleration += 0.001;
-		}
-	}
-	else if (inputState->isKeyPressed('S'))
-	{
-		if (cameraAcceleration > -cameraMaxSpeed) {
-			cameraAcceleration -= 0.001;
-		}
-	}
-	else
-	{
-		if (cameraAcceleration > 0)
-		{
-			cameraAcceleration -= 0.003;
-			if (cameraAcceleration < 0)
-			{
-				cameraAcceleration = 0;
-			}
-		}
-		else if (cameraAcceleration <= 0)
-		{
-			cameraAcceleration += 0.003;
-			if (cameraAcceleration > 0)
-			{
-				cameraAcceleration = 0;
-			}
-		}
-	}
-	playerX += playerDirSin * PLAYER_MOVEMENT_SPEED * deltaT * cameraAcceleration;
-	playerY += playerDirCos * PLAYER_MOVEMENT_SPEED * deltaT * cameraAcceleration;
-
-	if (inputState->isKeyPressed('D'))
-	{
-		rotateZ -= rotationSpeed * deltaT;
-	}
-	if (inputState->isKeyPressed('A'))
-	{
-		rotateZ += rotationSpeed * deltaT;
-	}
-
 	player.update(deltaT, prevDeltaT, inputState);
+	camRot = player.getPlayerRot();
+	camX = player.getPlayerX();
+	camY = player.getPlayerY();
 }
 
 void GameActivity::render()
@@ -233,8 +180,8 @@ void GameActivity::render()
 
 	//*************************************************************CAMERA CONTROLS
 	
-	glRotated(-rotateZ,0.0, 0.0, 1);
-	glTranslated(-playerX, -playerY, 0.0);
+	glRotated(-camRot,0.0, 0.0, 1);
+	glTranslated(-camX, -camY, 0.0);
 	renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);
 	
 	//***********************************************************STATIONARY ORB
@@ -302,8 +249,7 @@ void GameActivity::onKeyDown(int key)
 	{
 		// F1; switch to end screen activity
 		app->setCurrentActivity(app->endScreen);
-	}
-	if(key == VK_RETURN) {
+	}else if (key == VK_RETURN) {
 
 		app->setCurrentActivity(app->pauseScreen);
 	}

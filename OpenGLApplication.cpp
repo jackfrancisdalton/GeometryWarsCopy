@@ -55,8 +55,6 @@ double OpenGLApplication::getAspectRatio() const
 	return (double)screenWidth / (double)screenHeight;
 }
 
-
-
 // Activity
 Activity * OpenGLApplication::getCurrentActivity()
 {
@@ -80,8 +78,6 @@ void OpenGLApplication::setCurrentActivity(Activity *a)
 }
 
 
-
-
 // Initialise application
 void OpenGLApplication::initialise()
 {
@@ -90,8 +86,6 @@ void OpenGLApplication::initialise()
 	pauseScreen = new PauseScreenActivity(this);
 	game = new GameActivity(this);
 	endScreen = new EndScreenActivity(this);
-
-	
 
 	startScreen->initialise();
 	selectScreen->initialise();

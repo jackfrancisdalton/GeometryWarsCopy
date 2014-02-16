@@ -5,14 +5,9 @@
 class GameActivity : public Activity
 {
 private:
-	double camX, camY;
+	double camX, camY, camRot;
 	PlayerType1 player;
 	GLuint healthIconTextureID, playerTextureID, spikeBallTextureID, shieldTextureID, shieldHitTextureID;
-	double playerX_spriteSheet_offset, playerY_spriteSheet_offset;
-	double rotateZ;
-	double playerX, playerY;
-	double cameraAcceleration, cameraMaxSpeed;
-	double rotationSpeed;
 	int chosenShipID;
 
 public:
@@ -20,7 +15,6 @@ public:
 
 	virtual void initialise();											// Called on application start up
 	virtual void shutdown();											// Called on application shut down
-	virtual void setChosenShipID(int shipID);
 	virtual void onSwitchIn();								// Activity switch in; called when the activity changes and this one switches in
 	virtual void onReshape(int width, int height);						// called when the window is resized
 	virtual void update(double deltaT, double prevDeltaT);				// Update the application; if the current frame is frame number F, then the previous frame is F-1 and the one before that is F-2
