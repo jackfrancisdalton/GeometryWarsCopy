@@ -19,21 +19,6 @@
 
 PlayerShip::PlayerShip()
 {
-	playerX = 0.0;
-	playerY = 0.0;
-	rotateZ = 0.0;
-	boostOn = false;
-	jumpStage = 1.0;
-	falling = false;
-	jump = false;
-	shieldTime = 0.0;
-	powerORBRotate = 0.0;
-	attackZ = 0.0;
-	rotationSpeed = 100;
-	maxSpeed = defaultMaxSpeed = 5.0;
-	currentSpeed = 0.0;
-	rotateZ = 0.0;
-	acceleration = 0.003;
 }
 
 PlayerShip::PlayerShip(int shipID)
@@ -54,6 +39,7 @@ PlayerShip::PlayerShip(int shipID)
 	powerORBTranslateY = 2.0;
 	attackZ = 0.0;
 	maxSpeed = defaultMaxSpeed = 6.0;
+	boostSpeed = defaultMaxSpeed + 3.0;
 	currentSpeed = 0.0;
 	rotationSpeed = 150;
 	rotateZ = 0.0;
@@ -79,19 +65,19 @@ PlayerShip::PlayerShip(int shipID)
 void PlayerShip::initialise()
 {
 	if (shipChoice == 1) {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin1.png",
+		playerTextureID = SOIL_load_OGL_texture("playerSkin3.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 	}
 	else if (shipChoice == 2) {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin2.png",
+		playerTextureID = SOIL_load_OGL_texture("playerSkin1.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 	}
 	else {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin3.png",
+		playerTextureID = SOIL_load_OGL_texture("playerSkin2.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -221,7 +207,7 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 	}
 
 	if (boostOn == true) {
-		maxSpeed = 10;
+		maxSpeed = boostSpeed;
 	}
 
 	if (boostOn == false) {

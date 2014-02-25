@@ -13,7 +13,9 @@
   <ItemGroup>
     <ClCompile Include="Activity.cpp" />
     <ClCompile Include="EndScreenActivity.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameActivity.cpp" />
+    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="image_DXT.c" />
     <ClCompile Include="image_helper.c" />
     <ClCompile Include="InputState.cpp" />
@@ -29,7 +31,9 @@
   <ItemGroup>
     <ClInclude Include="Activity.h" />
     <ClInclude Include="EndScreenActivity.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameActivity.h" />
+    <ClInclude Include="HUD.h" />
     <ClInclude Include="image_DXT.h" />
     <ClInclude Include="image_helper.h" />
     <ClInclude Include="InputState.h" />

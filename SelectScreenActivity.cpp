@@ -119,16 +119,17 @@ void SelectScreenActivity::onKeyUp(int key)										// Called when key released
 	GameActivity *game = (GameActivity*)app->game;
 	if (key == '1')
 	{
-		//game->setChosenShipID(1);
+		game->chosenShipID = 1;
 		app->setCurrentActivity(app->game);
 	}
 	else if (key == '2')
 	{
-		//game->setChosenShipID(2);
+		game->chosenShipID = 2;
 		app->setCurrentActivity(app->game);
 	} 
 	else if (key == '3') 
 	{
+		game->chosenShipID = 3;
 		app->setCurrentActivity(app->game);
 	}
 }

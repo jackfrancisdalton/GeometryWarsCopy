@@ -20,7 +20,7 @@ private:
 	double shieldScale;
 	double powerORBTranslateY;
 	double rotationSpeed;
-	double maxSpeed, defaultMaxSpeed;
+	double maxSpeed, defaultMaxSpeed, boostSpeed;
 	double currentSpeed, acceleration, decceleration;
 	int shipChoice;
 	double rocketFlamesScaleY;

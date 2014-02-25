@@ -1,13 +1,24 @@
 #pragma once
 #include "Activity.h"
 #include "PlayerShip.h"
+#include "HUD.h"
+#include "Enemy.h"
+#include <vector>
 
 class GameActivity : public Activity
 {
 private:
 	double camX, camY, camRot;
+	double aspect;
 	PlayerShip player;
-	GLuint healthIconTextureID, playerTextureID, spikeBallTextureID, shieldTextureID, shieldHitTextureID;
+	std::vector<Enemy*> enemyList;
+	HUD mainHUD;
+	GLuint healthIconTextureID, playerTextureID, spikeBallTextureID, shieldTextureID, shieldHitTextureID, spaceTextureID;
+	GLuint texture[2];
+	int mapWidth;
+	int mapHeight;
+
+public:
 	int chosenShipID;
 
 public:
@@ -26,11 +37,7 @@ public:
 	virtual void onMouseMove(int mouseX, int mouseY);					// Called when mouse moved
 	virtual void onKeyDown(int key);									// Called when key pressed
 	virtual void onKeyUp(int key);										// Called when key released
-
-
-	void chooseWizardCharacter();
-	void chooseWarriorCharacter();
-
+	virtual void drawSquare(double posX, double posY, GLuint mapId);
 
 	// Drawing a grid in the background; useful for debugging
 	void renderDebugGrid(float left, float bottom, float width, float height, int hSegments, int vSegments);
