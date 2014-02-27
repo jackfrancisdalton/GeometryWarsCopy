@@ -228,7 +228,7 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 				jumpStage = jumpStage + 0.002;
 				if ( jumpStage  > JUMP_HEIGHT - 0.5)
 				{
-					falling = true; 
+					falling = true;
 				}
 			}
 			

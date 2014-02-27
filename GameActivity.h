@@ -2,7 +2,8 @@
 #include "Activity.h"
 #include "PlayerShip.h"
 #include "HUD.h"
-#include "Enemy.h"
+#include "EnemyType1.h"
+#include "EnemyType2.h"
 #include <vector>
 
 class GameActivity : public Activity

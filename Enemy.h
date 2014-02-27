@@ -2,20 +2,18 @@
 
 class Enemy
 {
-private:
-	GLuint enemyTextureId, enemyTextureId2;
+protected:
+	GLuint enemyTextureId;
 	int health;
 	double posX, posY, rot;
 	int state;
 	int id;
 	float textureX, textureY;
 	int refreshWait, refreshIndex;
-	
 	int frameCounter;
+
 public:
 	Enemy();
-	Enemy(int enemyID);
-	
 	virtual double getEnemyRot();
 	virtual double getEnemyX();
 	virtual double getEnemyY();

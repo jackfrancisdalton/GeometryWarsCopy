@@ -51,7 +51,6 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 	camX = camY = camRot = 0.0;
 	int skinID = 0;
 	mainHUD = HUD();
-
 	mapWidth = 20;
 	mapHeight = 20;
 }
@@ -69,6 +68,21 @@ void GameActivity::initialise()
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
 	mainHUD.initialise();
+
+	for (int i = 0; i < 10; i++) {
+		EnemyType1* e = new EnemyType1();
+		enemyList.push_back(e);
+	}
+
+	for (int i = 0; i < 10; i++) {
+		EnemyType2* g = new EnemyType2();
+		enemyList.push_back(g);
+	}
+
+	for each (EnemyType1* var in enemyList)
+	{
+		var->initialise();
+	}
 }
 
 void GameActivity::shutdown()
@@ -80,30 +94,16 @@ void GameActivity::onSwitchIn()
 {
 	glClearColor(0.0,0.0,0.0,0.0);						//sets the clear colour to black
 	player = PlayerShip(chosenShipID);
-	
-
-	for (int i = 0; i < 2; i++) {
-		Enemy* e = new Enemy(2);
-		enemyList.push_back(e);
-	}
-
-	for each (Enemy* var in enemyList)
-	{
-		var->initialise();
-	}
 	player.initialise();
 }
 
 void GameActivity::onReshape(int width, int height)
 {
 	glViewport(0,0,width,height);						// Reset The Current Viewport
-
 	glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
 	glLoadIdentity();									// Reset The Projection Matrix
-
 	aspect = app->getAspectRatio();
 	gluOrtho2D(-VIEW_SIZE*0.5*aspect, VIEW_SIZE*0.5*aspect,  -VIEW_SIZE*0.5, VIEW_SIZE*0.5);
-
 	glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
 	glLoadIdentity();									// Reset The Modelview Matrix
 	mainHUD.setPosition(VIEW_SIZE*0.5*aspect, -VIEW_SIZE*0.5);
@@ -115,7 +115,7 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 	camRot = player.getPlayerRot();
 	camX = player.getPlayerX();
 	camY = player.getPlayerY();
-	for each (Enemy* var in enemyList)
+	for each (EnemyType1* var in enemyList)
 	{
 		var->update(deltaT, prevDeltaT, camX, camY);
 	}
@@ -128,16 +128,15 @@ void GameActivity::render()
 	mainHUD.render();
 	glRotated(-camRot,0.0, 0.0, 1);
 	glTranslated(-camX, -camY, 0.0);
-	renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);
-	/*
-	for (int i = 0; i < mapHeight; i++) {
-		for (int j = 0; j < mapWidth; j++) {
+	//renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);
+	
+	for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < 20; j++) {
 			drawSquare(i, j, map[i][j]);
 		}
 	}
-	*/
 	
-	for each (Enemy* var in enemyList)
+	for each (EnemyType1* var in enemyList)
 	{
 		var->render();
 	}
@@ -229,11 +228,10 @@ void GameActivity::drawSquare(double posX, double posY, GLuint mapId) {
 	if (mapId == 1) {
 		glBindTexture(GL_TEXTURE_2D, healthIconTextureID);
 	}
-	else {
+	else if (mapId == 0) {
 		glBindTexture(GL_TEXTURE_2D, spaceTextureID);
 	}
 	
-	glBindTexture(GL_TEXTURE_2D, healthIconTextureID);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

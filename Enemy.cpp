@@ -16,25 +16,7 @@ Enemy::Enemy()
 {
 }
 
-Enemy::Enemy(int enemyID)
-{
-	id = enemyID;
-	posX = (rand() % 50 + 40);
-	posY = (rand() % 20 + 40);
-	rot = 0.0;
-	textureX = textureY = 0.25;
-	refreshWait = 1000;
-	refreshIndex = 1;
-	frameCounter = 0.0;
-}
-
-void Enemy::initialise()
-{
-	enemyTextureId = SOIL_load_OGL_texture("enemy-sprite-sheet.png",
-		SOIL_LOAD_AUTO,
-		SOIL_CREATE_NEW_ID,
-		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-}
+void Enemy::initialise(){}
 
 double Enemy::getEnemyRot() {
 	return rot;
@@ -58,65 +40,6 @@ void Enemy::onSwitchIn()
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 }
 
-void Enemy::update(double deltaT, double prevDeltaT, double playerX, double playerY)
-{
-	
-	frameCounter += 1 ;
-	if (frameCounter > 100) {
-		if (textureX < 1) {
-			textureX += .25;
-			frameCounter = 0.0;
-		}
-		else {
-			textureX = 0.25;
-			frameCounter = 0.0;
-		}
-	}
-	
-	double rotRads = atan2(posY - playerY, posX - playerX);
-	rot = rotRads * (180.0 / M_PI);
-	
-	double playerDirSin = sin(rotRads);
-	double playerDirCos = cos(rotRads);
-	
-	posX -= playerDirCos * 20 * deltaT;
-	posY -= playerDirSin * 20 * deltaT;
-}
+void Enemy::update(double deltaT, double prevDeltaT, double playerX, double playerY){}
 
-void Enemy::render()
-{
-	glPushMatrix();
-	
-		glTranslated(posX,posY, 0.0);
-		glRotated(rot, 0.0, 0.0, 1);
-
-		glBindTexture(GL_TEXTURE_2D, enemyTextureId);
-		glEnable(GL_TEXTURE_2D);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glBegin(GL_TRIANGLES);
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		glTexCoord2f(textureX - 0.25, 0);
-		glVertex2f(-1, -1);//bottom left
-
-		glTexCoord2f(textureX, 0);
-		glVertex2f(1, -1);//bottom right
-
-		glTexCoord2f(textureX - 0.25, 1.0);
-		glVertex2f(-1, 1);//top left
-
-		glTexCoord2f(textureX, 0);
-		glVertex2f(1, -1);//bottom right
-
-		glTexCoord2f(textureX, 1.0);
-		glVertex2f(1, 1);//top right
-
-		glTexCoord2f(textureX - 0.25, 1.0);
-		glVertex2f(-1, 1);//top left
-		glEnd();
-	glPopMatrix();
-	glDisable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
-}
+void Enemy::render(){}
