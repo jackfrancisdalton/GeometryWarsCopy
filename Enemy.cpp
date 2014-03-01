@@ -12,11 +12,7 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 
-Enemy::Enemy()
-{
-}
-
-void Enemy::initialise(){}
+Enemy::Enemy(){}
 
 double Enemy::getEnemyRot() {
 	return rot;
@@ -39,7 +35,3 @@ void Enemy::onSwitchIn()
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 }
-
-void Enemy::update(double deltaT, double prevDeltaT, double playerX, double playerY){}
-
-void Enemy::render(){}

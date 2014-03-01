@@ -16,6 +16,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyType1.cpp" />
     <ClCompile Include="EnemyType2.cpp" />
+    <ClCompile Include="EnemyType3.cpp" />
     <ClCompile Include="GameActivity.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="image_DXT.c" />
@@ -36,6 +37,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyType1.h" />
     <ClInclude Include="EnemyType2.h" />
+    <ClInclude Include="EnemyType3.h" />
     <ClInclude Include="GameActivity.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="image_DXT.h" />

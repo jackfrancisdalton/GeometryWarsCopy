@@ -24,26 +24,26 @@
 #define SHIELD_GROWTH_RATE 1.0
 
 char map[20][20] = {
-	{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
 };
 
 GameActivity::GameActivity(OpenGLApplication *app): Activity(app)	
@@ -57,7 +57,17 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 
 void GameActivity::initialise()
 {
-	healthIconTextureID = SOIL_load_OGL_texture("health_icon.png",
+	vertWall = SOIL_load_OGL_texture("vert-wall.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
+	horzWall = SOIL_load_OGL_texture("horz-wall.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
+	cornerWall = SOIL_load_OGL_texture("corner-wall.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -69,13 +79,20 @@ void GameActivity::initialise()
 
 	mainHUD.initialise();
 
-	for (int i = 0; i < 10; i++) {
+	//matrixFiller(*map, 20, 20);
+
+	for (int i = 0; i < 40; i++) {
 		EnemyType1* e = new EnemyType1();
 		enemyList.push_back(e);
 	}
 
 	for (int i = 0; i < 10; i++) {
 		EnemyType2* g = new EnemyType2();
+		enemyList.push_back(g);
+	}
+
+	for (int i = 0; i < 40; i++) {
+		EnemyType3* g = new EnemyType3();
 		enemyList.push_back(g);
 	}
 
@@ -115,7 +132,7 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 	camRot = player.getPlayerRot();
 	camX = player.getPlayerX();
 	camY = player.getPlayerY();
-	for each (EnemyType1* var in enemyList)
+	for each (Enemy* var in enemyList)
 	{
 		var->update(deltaT, prevDeltaT, camX, camY);
 	}
@@ -219,16 +236,42 @@ void GameActivity::renderDebugGrid(float left, float bottom, float width, float 
 
 	glEnd();
 }
+/*
+void GameActivity::matrixFiller(char *map, int w, int h)
+{
+	int i, j;
+
+	for (int i = 0; i < h; i++){
+		for (int j = 0; j < w; j++){
+			if (j == 0 || j == w) {
+				map[i][j] = 1;
+			}
+			else if (i == 0 || j == h){
+				map[i][j] = 2;
+			}
+			else {
+				map[i][j] = 0;
+			}
+		}
+	}
+}
+*/
 
 void GameActivity::drawSquare(double posX, double posY, GLuint mapId) {
 	glPushMatrix();
 
 	glTranslated(posX * 8 - (10 * 8), posY * 8 - (10 * 8), 0.0);
 	
-	if (mapId == 1) {
-		glBindTexture(GL_TEXTURE_2D, healthIconTextureID);
+	if (mapId == 3) {
+		glBindTexture(GL_TEXTURE_2D, cornerWall);
 	}
-	else if (mapId == 0) {
+	else if (mapId == 1){
+		glBindTexture(GL_TEXTURE_2D, vertWall);
+	}
+	else if (mapId == 2){
+		glBindTexture(GL_TEXTURE_2D, horzWall);
+	}
+	else {
 		glBindTexture(GL_TEXTURE_2D, spaceTextureID);
 	}
 	

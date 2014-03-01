@@ -3,7 +3,6 @@
 
 class EnemyType1 : public Enemy
 {
-private:
 
 public:
 	EnemyType1();

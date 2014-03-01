@@ -4,7 +4,7 @@
 #include <math.h>
 #include "SOIL.h"
 #include "OpenGLApplication.h"		
-#include "EnemyType2.h"
+#include "EnemyType3.h"
 #include <random>
 
 #ifndef M_PI
@@ -12,7 +12,7 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 
-EnemyType2::EnemyType2() : Enemy()
+EnemyType3::EnemyType3() : Enemy()
 {
 	posX = (rand() % 50 - 20) * 10;
 	posY = (rand() % 50 - 20) * 10;
@@ -21,18 +21,18 @@ EnemyType2::EnemyType2() : Enemy()
 	refreshWait = 1000;
 	refreshIndex = 1;
 	frameCounter = 0.0;
-	speed = (rand() % 5 + 25);
+	speed = (rand() % 30) + 1;
 }
 
-void EnemyType2::initialise()
+void EnemyType3::initialise()
 {
-	enemyTextureId = SOIL_load_OGL_texture("enemy-sprite-sheet2.png",
+	enemyTextureId = SOIL_load_OGL_texture("enemy-sprite-sheet3.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 }
 
-void EnemyType2::update(double deltaT, double prevDeltaT, double playerX, double playerY)
+void EnemyType3::update(double deltaT, double prevDeltaT, double playerX, double playerY)
 {
 
 	frameCounter += 1;
@@ -57,7 +57,7 @@ void EnemyType2::update(double deltaT, double prevDeltaT, double playerX, double
 	posY -= playerDirSin * speed * deltaT;
 }
 
-void EnemyType2::render()
+void EnemyType3::render()
 {
 	glPushMatrix();
 

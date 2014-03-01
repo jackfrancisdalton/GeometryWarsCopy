@@ -4,6 +4,7 @@
 #include "HUD.h"
 #include "EnemyType1.h"
 #include "EnemyType2.h"
+#include "EnemyType3.h"
 #include <vector>
 
 class GameActivity : public Activity
@@ -14,7 +15,7 @@ private:
 	PlayerShip player;
 	std::vector<Enemy*> enemyList;
 	HUD mainHUD;
-	GLuint healthIconTextureID, playerTextureID, spikeBallTextureID, shieldTextureID, shieldHitTextureID, spaceTextureID;
+	GLuint healthIconTextureID, vertWall, playerTextureID, horzWall, spikeBallTextureID, shieldTextureID, shieldHitTextureID, spaceTextureID, cornerWall;
 	GLuint texture[2];
 	int mapWidth;
 	int mapHeight;
@@ -39,6 +40,7 @@ public:
 	virtual void onKeyDown(int key);									// Called when key pressed
 	virtual void onKeyUp(int key);										// Called when key released
 	virtual void drawSquare(double posX, double posY, GLuint mapId);
+	//virtual void matrixFiller(char *map, int width, int height);
 
 	// Drawing a grid in the background; useful for debugging
 	void renderDebugGrid(float left, float bottom, float width, float height, int hSegments, int vSegments);

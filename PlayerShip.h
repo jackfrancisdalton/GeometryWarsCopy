@@ -25,6 +25,7 @@ private:
 	int shipChoice;
 	double rocketFlamesScaleY;
 	double rocketFlamesScaleX;
+	double HitRadius;
 
 public:
 	PlayerShip();

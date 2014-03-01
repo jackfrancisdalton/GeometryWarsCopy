@@ -50,6 +50,7 @@ PlayerShip::PlayerShip(int shipID)
 	rocketFlamesScaleX = 0.0;
 	powerORBOn = false;
 	boostOn = false;
+	HitRadius = 1;
 
 	if (shipChoice == 1) {
 		rotationSpeed = 500;

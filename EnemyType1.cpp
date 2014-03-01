@@ -14,13 +14,15 @@
 
 EnemyType1::EnemyType1() : Enemy()
 {
-	posX = (rand() % 50 + 40);
-	posY = (rand() % 20 + 40);
+	posX = (rand() % 50 - 20) * 10;
+	posY = (rand() % 50 - 20) * 10;
 	rot = 0.0;
 	textureX = textureY = 0.25;
 	refreshWait = 1000;
 	refreshIndex = 1;
 	frameCounter = 0.0;
+	speed = (rand() % 10) + 1;
+	HitRadius = 1;
 }
 
 void EnemyType1::initialise()
@@ -52,8 +54,8 @@ void EnemyType1::update(double deltaT, double prevDeltaT, double playerX, double
 	double playerDirSin = sin(rotRads); //calculates direction for y
 	double playerDirCos = cos(rotRads); //calculates direction for x
 
-	posX -= playerDirCos * 20 * deltaT;
-	posY -= playerDirSin * 20 * deltaT;
+	posX -= playerDirCos * speed * deltaT;
+	posY -= playerDirSin * speed * deltaT;
 }
 
 void EnemyType1::render()

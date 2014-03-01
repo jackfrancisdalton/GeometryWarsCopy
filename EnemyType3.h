@@ -1,10 +1,11 @@
 #include <gl/gl.h>			
 #include "Enemy.h"
 
-class EnemyType2 : public Enemy
+class EnemyType3 : public Enemy
 {
+
 public:
-	EnemyType2();
+	EnemyType3();
 	virtual void initialise();
 	virtual void update(double deltaT, double prevDeltaT, double playerX, double playerY);
 	virtual void render();
