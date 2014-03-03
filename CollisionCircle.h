@@ -3,9 +3,13 @@
 class CollisionCircle
 {
 private:
-	double radius;
+	double radius, centreX, centreY;
 
 public:
 	CollisionCircle();
-	virtual void isColiding(double posX, double posY, double rot);
+	CollisionCircle(double posX, double posY);
+	virtual void Update(double posX, double posY);
+	virtual bool isColidingWith(CollisionCircle &other);
+	virtual double getX();
+	virtual double getY();
 };

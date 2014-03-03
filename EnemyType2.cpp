@@ -22,6 +22,7 @@ EnemyType2::EnemyType2() : Enemy()
 	refreshIndex = 1;
 	frameCounter = 0.0;
 	speed = 30;
+	collisionCircle = CollisionCircle(posX, posY);
 }
 
 void EnemyType2::initialise()
@@ -55,6 +56,8 @@ void EnemyType2::update(double deltaT, double prevDeltaT, double playerX, double
 
 	posX -= playerDirCos * speed * deltaT;
 	posY -= playerDirSin * speed * deltaT;
+
+	collisionCircle.Update(posX, posY);
 }
 
 void EnemyType2::render()

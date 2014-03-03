@@ -80,23 +80,23 @@ void GameActivity::initialise()
 	mainHUD.initialise();
 
 	//matrixFiller(*map, 20, 20);
-
-	for (int i = 0; i < 20; i++) {
+	
+	for (int i = 0; i < 5; i++) {
 		EnemyType1* e = new EnemyType1();
 		enemyList.push_back(e);
 	}
-
-	for (int i = 0; i < 10; i++) {
+	/*
+	for (int i = 0; i < 2; i++) {
 		EnemyType2* g = new EnemyType2();
 		enemyList.push_back(g);
 	}
-
-	for (int i = 0; i < 20; i++) {
+	
+	for (int i = 0; i < 2; i++) {
 		EnemyType3* g = new EnemyType3();
 		enemyList.push_back(g);
 	}
-
-	for each (EnemyType1* var in enemyList)
+	*/
+	for each (Enemy* var in enemyList)
 	{
 		var->initialise();
 	}
@@ -128,13 +128,28 @@ void GameActivity::onReshape(int width, int height)
 
 void GameActivity::update(double deltaT, double prevDeltaT)
 {
+
+	AllocConsole();
+	freopen("CONOUT$", "w", stdout);
+
 	player.update(deltaT, prevDeltaT, inputState);
 	camRot = player.getPlayerRot();
 	camX = player.getPlayerX();
 	camY = player.getPlayerY();
-	for each (Enemy* var in enemyList)
+
+	for each (Enemy* circle in enemyList)
 	{
-		var->update(deltaT, prevDeltaT, camX, camY);
+		circle->update(deltaT, prevDeltaT, camX, camY);
+		bool coliding = false;
+		for each(Enemy* otherCircle in enemyList) 
+		{
+			if (otherCircle != circle)
+			{
+				bool state = circle->getCollisionCircleReference().isColidingWith(otherCircle->getCollisionCircleReference());
+				circle->setEnemyCollisionState(state);
+				otherCircle->setEnemyCollisionState(state);
+			}
+		}
 	}
 }
 
@@ -153,7 +168,7 @@ void GameActivity::render()
 		}
 	}
 	
-	for each (EnemyType1* var in enemyList)
+	for each (Enemy* var in enemyList)
 	{
 		var->render();
 	}

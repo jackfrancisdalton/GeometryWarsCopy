@@ -22,7 +22,7 @@ EnemyType1::EnemyType1() : Enemy()
 	refreshIndex = 1;
 	frameCounter = 0.0;
 	speed = 20;
-	HitRadius = 1;
+	collisionCircle = CollisionCircle(posX, posY);
 }
 
 void EnemyType1::initialise()
@@ -35,7 +35,6 @@ void EnemyType1::initialise()
 
 void EnemyType1::update(double deltaT, double prevDeltaT, double playerX, double playerY)
 {
-
 	frameCounter += 1;
 	if (frameCounter > 100) {
 		if (textureX < 1) {
@@ -56,6 +55,12 @@ void EnemyType1::update(double deltaT, double prevDeltaT, double playerX, double
 
 	posX -= playerDirCos * speed * deltaT;
 	posY -= playerDirSin * speed * deltaT;
+
+	collisionCircle.Update(posX, posY);
+
+	if (collisionState == true) {
+		speed = 1;
+	}
 }
 
 void EnemyType1::render()

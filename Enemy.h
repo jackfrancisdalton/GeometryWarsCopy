@@ -9,22 +9,22 @@ class Enemy
 protected:
 	GLuint enemyTextureId;
 	int health;
+	bool collisionState;
 	double posX, posY, rot;
-	int state;
-	int id;
-	double HitRadius;
 	float textureX, textureY;
 	int refreshWait, refreshIndex;
 	int frameCounter;
 	double speed;
-	CollisionCircle collision;
+	CollisionCircle collisionCircle;
 
 public:
 	Enemy();
-
 	virtual double getEnemyRot();
 	virtual double getEnemyX();
 	virtual double getEnemyY();
+	virtual void setEnemyCollisionState(bool state);
+	virtual CollisionCircle getCollisionCircle();
+	virtual CollisionCircle& getCollisionCircleReference();
 	virtual void initialise() = 0;											// Called on application start up
 	virtual void shutdown();											// Called on application shut down
 	virtual void onSwitchIn();											// Activity switch in; called when the activity changes and this one switches in

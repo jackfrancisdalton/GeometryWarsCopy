@@ -26,6 +26,18 @@ double Enemy::getEnemyY() {
 	return posY;
 }
 
+void Enemy::setEnemyCollisionState(bool state) {
+	collisionState = state;
+}
+
+CollisionCircle& Enemy::getCollisionCircleReference() {
+	return collisionCircle;
+}
+
+CollisionCircle Enemy::getCollisionCircle() {
+	return collisionCircle;
+}
+
 void Enemy::shutdown()
 {
 	glDeleteTextures(1, &enemyTextureId);

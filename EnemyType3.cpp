@@ -21,7 +21,8 @@ EnemyType3::EnemyType3() : Enemy()
 	refreshWait = 1000;
 	refreshIndex = 1;
 	frameCounter = 0.0;
-	speed = 10;
+	speed = 20;
+	collisionCircle = CollisionCircle(posX, posY);
 }
 
 void EnemyType3::initialise()
@@ -55,6 +56,8 @@ void EnemyType3::update(double deltaT, double prevDeltaT, double playerX, double
 
 	posX -= playerDirCos * speed * deltaT;
 	posY -= playerDirSin * speed * deltaT;
+
+	collisionCircle.Update(posX, posY);
 }
 
 void EnemyType3::render()
