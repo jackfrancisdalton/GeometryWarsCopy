@@ -226,7 +226,7 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 		{
 			if (falling == false) //is going up
 			{
-				jumpStage = jumpStage + 0.002;
+				jumpStage = jumpStage + 0.002 + (1 * deltaT);
 				if ( jumpStage  > JUMP_HEIGHT - 0.5)
 				{
 					falling = true;
@@ -235,7 +235,7 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 			
 			else if (falling == true) //is coming back down
 			{
-				jumpStage = jumpStage - 0.003;
+				jumpStage = jumpStage - 0.003 - (1 * deltaT);
 				if ( jumpStage < 1.001 ) 
 				{
 					jumpStage = 1;
@@ -250,12 +250,12 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 	if(powerORBOn == true) {
 		powerORBRotate += (ROTATION_SPIKE_BALL_SPEED * deltaT);
 		if (powerORBSize < powerORBMaxSize) {
-			powerORBSize += 0.001;
+			powerORBSize += 0.001 + (1 * deltaT);
 		}
 	}
 	else if(powerORBOn == false) {
 		if (powerORBSize > 0.0) {
-			powerORBSize -= 0.001;
+			powerORBSize -= 0.001 + (1 * deltaT);
 		}
 		if (powerORBSize == 0.0) {
 			powerORBRotate = 0.0;

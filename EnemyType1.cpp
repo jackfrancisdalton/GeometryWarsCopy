@@ -21,7 +21,7 @@ EnemyType1::EnemyType1() : Enemy()
 	refreshWait = 1000;
 	refreshIndex = 1;
 	frameCounter = 0.0;
-	speed = (rand() % 10) + 1;
+	speed = 20;
 	HitRadius = 1;
 }
 

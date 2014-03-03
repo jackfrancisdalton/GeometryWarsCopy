@@ -81,7 +81,7 @@ void GameActivity::initialise()
 
 	//matrixFiller(*map, 20, 20);
 
-	for (int i = 0; i < 40; i++) {
+	for (int i = 0; i < 20; i++) {
 		EnemyType1* e = new EnemyType1();
 		enemyList.push_back(e);
 	}
@@ -91,7 +91,7 @@ void GameActivity::initialise()
 		enemyList.push_back(g);
 	}
 
-	for (int i = 0; i < 40; i++) {
+	for (int i = 0; i < 20; i++) {
 		EnemyType3* g = new EnemyType3();
 		enemyList.push_back(g);
 	}

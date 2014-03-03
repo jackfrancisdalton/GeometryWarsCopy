@@ -21,7 +21,7 @@ EnemyType2::EnemyType2() : Enemy()
 	refreshWait = 1000;
 	refreshIndex = 1;
 	frameCounter = 0.0;
-	speed = (rand() % 5 + 25);
+	speed = 30;
 }
 
 void EnemyType2::initialise()
