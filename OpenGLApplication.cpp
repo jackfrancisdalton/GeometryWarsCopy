@@ -20,8 +20,8 @@
 OpenGLApplication::OpenGLApplication()
 {
 	// Sensible defaults to start with
-	screenWidth = 800;
-	screenHeight = 600;
+	screenHeight = GetSystemMetrics(SM_CYFULLSCREEN) - (7 * 2);
+	screenWidth = GetSystemMetrics(SM_CXFULLSCREEN) - (7 * 2);
 
 	currentActivity = NULL;
 
@@ -244,4 +244,3 @@ void OpenGLApplication::handleKeyUp(int key)
 		currentActivity->onKeyUp(key);
 	}
 }
-

@@ -12,10 +12,14 @@
 #define JUMP_HEIGHT 2.5
 #define SHIELD_OSCILATION_SPEED 1.5
 #define SHIELD_GROWTH_RATE 1.0
+#define FLAME_OSCILATION_SPEED 1.5
+#define FLAME_GROWTH_RATE 1.0
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
+
+
 
 PlayerShip::PlayerShip()
 {
@@ -39,28 +43,33 @@ PlayerShip::PlayerShip(int shipID)
 	powerORBTranslateY = 2.0;
 	attackZ = 0.0;
 	maxSpeed = defaultMaxSpeed = 6.0;
-	boostSpeed = defaultMaxSpeed + 3.0;
 	currentSpeed = 0.0;
 	rotationSpeed = 150;
 	rotateZ = 0.0;
-	acceleration = 0.009;
-	decceleration = 0.012;
+	acceleration = 0.01;
+	decceleration = 0.02;
 	shipChoice = shipID;
 	rocketFlamesScaleY = 0.0;
 	rocketFlamesScaleX = 0.0;
 	powerORBOn = false;
 	boostOn = false;
 	HitRadius = 1;
+	directionChangeSpeed = 0.1;
+
+	playerPoly = polygon(4);
+	playerPolyN = polygon(4);
 
 	if (shipChoice == 1) {
 		rotationSpeed = 500;
 	}
 	else if(shipChoice == 2) {
-		acceleration = 0.02;
+		acceleration = 0.04;
 	}
 	else if (shipChoice == 3) {
 		defaultMaxSpeed = 20.0;
 	}
+
+	boostSpeed = defaultMaxSpeed + 2.0;
 }
 
 void PlayerShip::initialise()
@@ -103,6 +112,16 @@ void PlayerShip::initialise()
 		SOIL_LOAD_AUTO,							 
 		SOIL_CREATE_NEW_ID,										
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
+
+	playerPolyN.vert[0].x = playerPoly.vert[0].x = -2;
+	playerPolyN.vert[0].y = playerPoly.vert[0].y = -2;
+	playerPolyN.vert[1].x = playerPoly.vert[1].x = 2;
+	playerPolyN.vert[1].y = playerPoly.vert[1].y = -2;
+	playerPolyN.vert[2].x = playerPoly.vert[2].x = 2;
+	playerPolyN.vert[2].y = playerPoly.vert[2].y = 4;
+	playerPolyN.vert[3].x = playerPoly.vert[3].x = -2;
+	playerPolyN.vert[3].y = playerPoly.vert[3].y = 4;
 }
 
 double PlayerShip::getPlayerRot() {
@@ -133,22 +152,53 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 
 	if(inputState->isKeyPressed('W'))
 	{
-		if (currentSpeed < maxSpeed) {
-			currentSpeed += acceleration;
-		}
-		if (rocketFlamesScaleY < 1.0)
+		if (currentSpeed > 0) 
 		{
-			rocketFlamesScaleY += 0.006;
+			if (currentSpeed < maxSpeed) {
+				currentSpeed += acceleration;
+			}
+			if (rocketFlamesScaleY < 1.0)
+			{
+				rocketFlamesScaleY += 0.006;
+			}
+			if (rocketFlamesScaleX < 1.0)
+			{
+				rocketFlamesScaleX += 0.006;
+			}
 		}
-		if (rocketFlamesScaleX < 1.0)
+		else
 		{
-			rocketFlamesScaleX += 0.006;
+			if (currentSpeed < maxSpeed) {
+				currentSpeed += directionChangeSpeed;
+			}
+			if (rocketFlamesScaleY < 1.0)
+			{
+				rocketFlamesScaleY += 0.006;
+			}
+			if (rocketFlamesScaleX < 1.0)
+			{
+				rocketFlamesScaleX += 0.006;
+			}
 		}
 	}
+
 	else if(inputState->isKeyPressed('S'))
 	{
 		if (currentSpeed > -maxSpeed) {
-			currentSpeed -= decceleration;
+			if (currentSpeed < 0) {
+				currentSpeed -= acceleration;
+			}
+			else{
+				currentSpeed -= 0.1;
+			}
+		}
+		if (rocketFlamesScaleY > 0.0)
+		{
+			rocketFlamesScaleY -= 0.006;
+		}
+		if (rocketFlamesScaleX > 0.0)
+		{
+			rocketFlamesScaleX -= 0.006;
 		}
 	}
 	else
@@ -190,33 +240,24 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 	{
 		rotateZ += rotationSpeed * deltaT;
 	}
-	if(inputState->isKeyPressed('Q'))
-	{
-		playerX += -playerDirCos * PLAYER_MOVEMENT_SPEED * deltaT;
-		playerY += playerDirSin * PLAYER_MOVEMENT_SPEED * deltaT;
-	}
-	if(inputState->isKeyPressed('E'))
-	{
-		playerX += playerDirCos * PLAYER_MOVEMENT_SPEED * deltaT;
-		playerY += -playerDirSin * PLAYER_MOVEMENT_SPEED * deltaT;
-	}
 
 	//**************************************ATTACK AND BOOST
-	if(inputState->isKeyPressed('F'))
-	{
-		attackZ += rotationSpeed * deltaT;
-	}
-
 	if (boostOn == true) {
 		maxSpeed = boostSpeed;
 	}
 
 	if (boostOn == false) {
 		maxSpeed = defaultMaxSpeed;
+
+		if (currentSpeed > maxSpeed) {
+			currentSpeed -= 0.1;
+		}
 	}
 
+	
+
 	//***************************************JUMPING
-	if (inputState->isKeyPressed(' '))
+	if (inputState->isKeyPressed('J'))
 	{
 		jump = true;
 	}
@@ -289,6 +330,12 @@ void PlayerShip::render()
 		glRotated(rotateZ, 0.0, 0.0, 1);
 		glScaled(jumpStage, jumpStage, 3.0);
 
+
+		setTraMat(mb1, playerX, playerY, 0.0);
+		setRotMat(mb2, M_PI*rotateZ / 180.0, 2);
+		MultMat(mb1, mb2, mb);
+		for (int i = 0; i<4; ++i)MultMatPre2DPoint(mb, &playerPoly.vert[i], &playerPolyN.vert[i]);
+
 		glBindTexture(GL_TEXTURE_2D, playerTextureID);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
@@ -319,11 +366,13 @@ void PlayerShip::render()
 		glDisable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
 
+
+		float fscale = (1 + sin(shieldTime * 20) / 10.0f) * (rocketFlamesScaleY - 0.2);
 		//Booster 1
 		glPushMatrix();
 			
 			glTranslated(-0.8,-2.6,0.0);
-			glScaled(rocketFlamesScaleX, rocketFlamesScaleY, 1.0);
+			glScaled(fscale, fscale, 1.0);
 
 			glBindTexture(GL_TEXTURE_2D, rocketBooster);
 			glEnable(GL_TEXTURE_2D);
@@ -358,9 +407,9 @@ void PlayerShip::render()
 
 		//Booster 2
 		glPushMatrix();
-
+			
 			glTranslated(0.6, -2.6, 0.0);
-			glScaled(rocketFlamesScaleX, rocketFlamesScaleY, 1.0);
+			glScaled(fscale, fscale, 1.0);
 
 			glBindTexture(GL_TEXTURE_2D, rocketBooster);
 			glEnable(GL_TEXTURE_2D);
@@ -485,10 +534,18 @@ void PlayerShip::powerBallToggle() {
 	powerORBOn = !powerORBOn;
 }
 
-void PlayerShip::boostToggle()
+void PlayerShip::boostToggleOn()
 {
-	boostOn = !boostOn;
-	if (boostOn == false) {
-		currentSpeed = defaultMaxSpeed;
-	}
+	boostOn = true;
+}
+
+void PlayerShip::boostToggleOff()
+{
+	boostOn = false;
+	//currentSpeed = defaultMaxSpeed;
+}
+
+polygon PlayerShip::getPolygonN()
+{
+	return playerPolyN;
 }

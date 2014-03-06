@@ -26,16 +26,17 @@ double Enemy::getEnemyY() {
 	return posY;
 }
 
+void Enemy::setSpeed(double s) {
+	speed = s;
+}
+
+polygon Enemy::getPolygonN()
+{
+	return enemyPolyN;
+}
+
 void Enemy::setEnemyCollisionState(bool state) {
 	collisionState = state;
-}
-
-CollisionCircle& Enemy::getCollisionCircleReference() {
-	return collisionCircle;
-}
-
-CollisionCircle Enemy::getCollisionCircle() {
-	return collisionCircle;
 }
 
 void Enemy::shutdown()

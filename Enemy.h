@@ -2,7 +2,8 @@
 #define ENEMY_H
 
 #include <gl/gl.h>			
-#include <CollisionCircle.h>	
+#include "PolyObjects.h"
+#include "Matrix.h"
 
 class Enemy
 {
@@ -15,16 +16,17 @@ protected:
 	int refreshWait, refreshIndex;
 	int frameCounter;
 	double speed;
-	CollisionCircle collisionCircle;
+	polygon enemyPoly, enemyPolyN;
+	double enemySize = 2;
 
 public:
 	Enemy();
+	virtual void setSpeed(double speed);
 	virtual double getEnemyRot();
 	virtual double getEnemyX();
 	virtual double getEnemyY();
+	virtual polygon getPolygonN();
 	virtual void setEnemyCollisionState(bool state);
-	virtual CollisionCircle getCollisionCircle();
-	virtual CollisionCircle& getCollisionCircleReference();
 	virtual void initialise() = 0;											// Called on application start up
 	virtual void shutdown();											// Called on application shut down
 	virtual void onSwitchIn();											// Activity switch in; called when the activity changes and this one switches in

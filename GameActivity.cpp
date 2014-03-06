@@ -6,9 +6,9 @@
 #include "SOIL.h"
 #include "OpenGLApplication.h"			// Needed to access member functions and variables from OpenGLApplication
 #include "GameActivity.h"
+#include "Collision.h"
 #include <iostream>
 #include <vector>
-
 
 #define MAP_SIZEX 10
 #define MAP_SIZEY 10
@@ -22,6 +22,10 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 #define SHIELD_GROWTH_RATE 1.0
+#define CARRY_ON 30.0
+#define ENEMY_SIZE 1.0
+
+static double collision_wait = 0;
 
 char map[20][20] = {
 	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
@@ -78,27 +82,25 @@ void GameActivity::initialise()
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
 	mainHUD.initialise();
-
-	//matrixFiller(*map, 20, 20);
 	
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 		EnemyType1* e = new EnemyType1();
 		enemyList.push_back(e);
 	}
 	/*
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 20; i++) {
 		EnemyType2* g = new EnemyType2();
 		enemyList.push_back(g);
 	}
 	
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 20; i++) {
 		EnemyType3* g = new EnemyType3();
 		enemyList.push_back(g);
 	}
 	*/
-	for each (Enemy* var in enemyList)
+	for each (Enemy* e in enemyList)
 	{
-		var->initialise();
+		e->initialise();
 	}
 }
 
@@ -128,7 +130,6 @@ void GameActivity::onReshape(int width, int height)
 
 void GameActivity::update(double deltaT, double prevDeltaT)
 {
-
 	AllocConsole();
 	freopen("CONOUT$", "w", stdout);
 
@@ -137,18 +138,71 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 	camX = player.getPlayerX();
 	camY = player.getPlayerY();
 
-	for each (Enemy* circle in enemyList)
+	for each (Enemy* e in enemyList)
 	{
-		circle->update(deltaT, prevDeltaT, camX, camY);
-		bool coliding = false;
-		for each(Enemy* otherCircle in enemyList) 
+		e->update(deltaT, prevDeltaT, camX, camY);
+	}
+	/*
+	for (int i = 0; i < enemyList.size()-1; i++)
+	{
+		for (int j = i+1; j < enemyList.size(); j++)
 		{
-			if (otherCircle != circle)
-			{
-				bool state = circle->getCollisionCircleReference().isColidingWith(otherCircle->getCollisionCircleReference());
-				circle->setEnemyCollisionState(state);
-				otherCircle->setEnemyCollisionState(state);
+			if (!SAT2D(&enemyList.at(i)->getPolygonN(), &enemyList.at(j)->getPolygonN())){
+				collision_flag = true;
+				collision_wait++;
+				if (collision_wait>CARRY_ON){
+					enemyList.at(i)->setSpeed(1);
+					enemyList.at(j)->setSpeed(1);
+					collision_flag = false;
+					collision_wait = 0;
+					dmove *= -2.0;
+				}
 			}
+			else {
+				collision_flag = false;
+				spin += dspin;
+				if (spin >= 360)spin = 0.0;
+			}
+		}
+	}
+	*/
+	/*
+	for each (Enemy* e in enemyList)
+	{
+		for each (Enemy* f in enemyList)
+		{
+			if (e != f) {
+				if (!SAT2D(&e->getPolygonN(), &f->getPolygonN())){
+					collision_flag = true;
+					collision_wait++;
+					if (collision_wait>CARRY_ON) {
+						collision_flag = false;
+						collision_wait = 0;
+						e->setSpeed(0);
+						f->setSpeed(0);
+					}
+				}
+				else {
+					collision_flag = false;
+				}
+			}
+		}
+	}
+	*/
+
+	for each (Enemy* e in enemyList)
+	{
+		if (!SAT2D(&player.getPolygonN(), &e->getPolygonN())){
+			collision_flag = true;
+			collision_wait++;
+			if (collision_wait > CARRY_ON) {
+				collision_flag = false;
+				collision_wait = 0;
+				e->setSpeed(0);
+			}
+		}
+		else {
+			collision_flag = false;
 		}
 	}
 }
@@ -167,11 +221,12 @@ void GameActivity::render()
 			drawSquare(i, j, map[i][j]);
 		}
 	}
-	
+
 	for each (Enemy* var in enemyList)
 	{
 		var->render();
 	}
+
 	player.render();
 	glFlush();
 }
@@ -212,13 +267,16 @@ void GameActivity::onKeyDown(int key)
 	else if (key == '2') {
 		player.powerBallToggle();
 	}
-	else if (key == '3') {
-		player.boostToggle();
+	else if (key == VK_SPACE) {
+		player.boostToggleOn();
 	}
 }
 
 void GameActivity::onKeyUp(int key)									
 {
+	if (key == VK_SPACE) {
+		player.boostToggleOff();
+	}
 }
 
 

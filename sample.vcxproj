@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Activity.cpp" />
-    <ClCompile Include="CollisionCircle.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="EndScreenActivity.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyType1.cpp" />
@@ -23,10 +23,12 @@
     <ClCompile Include="image_DXT.c" />
     <ClCompile Include="image_helper.c" />
     <ClCompile Include="InputState.cpp" />
+    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="OpenGLApplication.cpp" />
     <ClCompile Include="PauseScreenActivity.cpp" />
     <ClCompile Include="PlayerShip.cpp" />
+    <ClCompile Include="PolyObjects.cpp" />
     <ClCompile Include="SelectScreenActivity.cpp" />
     <ClCompile Include="SOIL.c" />
     <ClCompile Include="StartScreenActivity.cpp" />
@@ -35,7 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Activity.h" />
-    <ClInclude Include="CollisionCircle.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="EndScreenActivity.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyType1.h" />
@@ -46,10 +48,12 @@
     <ClInclude Include="image_DXT.h" />
     <ClInclude Include="image_helper.h" />
     <ClInclude Include="InputState.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="OpenGLApplication.h" />
     <ClInclude Include="PauseScreenActivity.h" />
     <ClInclude Include="PlayerShip.h" />
+    <ClInclude Include="PolyObjects.h" />
     <ClInclude Include="SelectScreenActivity.h" />
     <ClInclude Include="SOIL.h" />
     <ClInclude Include="StartScreenActivity.h" />

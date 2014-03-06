@@ -1,4 +1,6 @@
-#include <gl/gl.h>			
+#include <gl/gl.h>	
+#include "PolyObjects.h"
+#include "Matrix.h"
 
 class PlayerShip
 {
@@ -26,17 +28,23 @@ private:
 	double rocketFlamesScaleY;
 	double rocketFlamesScaleX;
 	double HitRadius;
+	polygon playerPoly, playerPolyN;
+	double directionChangeSpeed;
+	float mb[16], mb1[16], mb2[16];
+
 
 public:
 	PlayerShip();
 	PlayerShip(int shipID);
 
 	virtual void powerBallToggle();
-	virtual void boostToggle();
+	virtual void boostToggleOn();
+	virtual void boostToggleOff();
 	virtual void shieldToggle();
 	virtual double getPlayerRot();
 	virtual double getPlayerX();
 	virtual double getPlayerY();
+	virtual polygon getPolygonN();
 	virtual void initialise();											// Called on application start up
 	virtual void shutdown();											// Called on application shut down
 	virtual void onSwitchIn();											// Activity switch in; called when the activity changes and this one switches in
