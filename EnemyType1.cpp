@@ -12,9 +12,6 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 
-
-
-
 EnemyType1::EnemyType1() : Enemy()
 {
 	posX = (rand() % 10) * 5;
@@ -24,14 +21,14 @@ EnemyType1::EnemyType1() : Enemy()
 	refreshWait = 1000;
 	refreshIndex = 1;
 	frameCounter = 0.0;
-	speed = 10;
+	speed = 0;
 	enemyPoly = polygon(4);
 	enemyPolyN = polygon(4);
 }
 
 void EnemyType1::initialise()
 {
-	enemyTextureId = SOIL_load_OGL_texture("health_icon.png",
+	enemyTextureId = SOIL_load_OGL_texture("playerTexture1.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -81,7 +78,7 @@ void EnemyType1::render()
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(1.0f, 0.0f, 0.0f);
 
 	setTraMat(mb1, posX, posY, 0.0);
 	setRotMat(mb2, M_PI*rot / 180.0, 2);

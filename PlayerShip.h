@@ -41,6 +41,8 @@ public:
 	virtual void boostToggleOn();
 	virtual void boostToggleOff();
 	virtual void shieldToggle();
+	virtual void setPlayerJumpOn();
+	virtual bool getPlayerJumpState();
 	virtual double getPlayerRot();
 	virtual double getPlayerX();
 	virtual double getPlayerY();

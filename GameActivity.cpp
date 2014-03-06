@@ -12,7 +12,7 @@
 
 #define MAP_SIZEX 10
 #define MAP_SIZEY 10
-#define VIEW_SIZE 80.0
+#define VIEW_SIZE 60.0
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
 #define JUMP_HEIGHT 2.5
@@ -22,7 +22,8 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 #define SHIELD_GROWTH_RATE 1.0
-#define CARRY_ON 30.0
+#define CARRY_ON 50.0
+#define CARRY_ON_PLAYER 2.0
 #define ENEMY_SIZE 1.0
 
 static double collision_wait = 0;
@@ -57,6 +58,8 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 	mainHUD = HUD();
 	mapWidth = 20;
 	mapHeight = 20;
+	pad = JumpPad();
+
 }
 
 void GameActivity::initialise()
@@ -83,10 +86,11 @@ void GameActivity::initialise()
 
 	mainHUD.initialise();
 	
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 10; i++) {
 		EnemyType1* e = new EnemyType1();
 		enemyList.push_back(e);
 	}
+
 	/*
 	for (int i = 0; i < 20; i++) {
 		EnemyType2* g = new EnemyType2();
@@ -102,6 +106,8 @@ void GameActivity::initialise()
 	{
 		e->initialise();
 	}
+
+	pad.initialise();
 }
 
 void GameActivity::shutdown()
@@ -138,10 +144,6 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 	camX = player.getPlayerX();
 	camY = player.getPlayerY();
 
-	for each (Enemy* e in enemyList)
-	{
-		e->update(deltaT, prevDeltaT, camX, camY);
-	}
 	/*
 	for (int i = 0; i < enemyList.size()-1; i++)
 	{
@@ -192,18 +194,30 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 
 	for each (Enemy* e in enemyList)
 	{
-		if (!SAT2D(&player.getPolygonN(), &e->getPolygonN())){
+		if ((!SAT2D(&player.getPolygonN(), &e->getPolygonN())) && player.getPlayerJumpState() == false) {
 			collision_flag = true;
 			collision_wait++;
-			if (collision_wait > CARRY_ON) {
+			if (collision_wait > CARRY_ON_PLAYER) {
 				collision_flag = false;
 				collision_wait = 0;
-				e->setSpeed(0);
+				e->setSpeed(20);
 			}
 		}
 		else {
 			collision_flag = false;
 		}
+	}
+
+
+	if (!SAT2D(&player.getPolygonN(), &pad.getPolygonN())) {
+		player.setPlayerJumpOn();
+	}
+
+	pad.update(deltaT, prevDeltaT, camX, camY);
+
+	for each (Enemy* e in enemyList)
+	{
+		e->update(deltaT, prevDeltaT, camX, camY);
 	}
 }
 
@@ -222,12 +236,16 @@ void GameActivity::render()
 		}
 	}
 
+	
+
 	for each (Enemy* var in enemyList)
 	{
 		var->render();
 	}
 
+	pad.render();
 	player.render();
+
 	glFlush();
 }
 

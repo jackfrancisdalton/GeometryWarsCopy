@@ -2,6 +2,8 @@
 #include "Activity.h"
 #include "PlayerShip.h"
 #include "HUD.h"
+#include "Object.h"
+#include "JumpPad.h"
 #include "Enemy.h"
 #include "EnemyType1.h"
 #include "EnemyType2.h"
@@ -16,6 +18,7 @@ class GameActivity : public Activity
 private:
 	double camX, camY, camRot;
 	double aspect;
+	JumpPad pad;
 	PlayerShip player;
 	std::vector<Enemy*> enemyList;
 	HUD mainHUD;

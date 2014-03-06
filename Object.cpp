@@ -4,7 +4,7 @@
 #include <math.h>
 #include "SOIL.h"
 #include "OpenGLApplication.h"		
-#include "Obstacle.h"
+#include "Object.h"
 #include <random>
 
 #ifndef M_PI
@@ -12,14 +12,8 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 
-Obstacle::Obstacle(){}
+Object::Object(){}
 
-void Obstacle::shutdown()
-{
-	glDeleteTextures(1, &TextureId);
-}
-
-void Obstacle::onSwitchIn()
-{
-	glClearColor(0.0, 0.0, 0.0, 0.0);
+polygon Object::getPolygonN() {
+	return objectPolyN;
 }

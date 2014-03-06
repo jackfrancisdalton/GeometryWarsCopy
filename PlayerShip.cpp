@@ -75,19 +75,19 @@ PlayerShip::PlayerShip(int shipID)
 void PlayerShip::initialise()
 {
 	if (shipChoice == 1) {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin3.png",
+		playerTextureID = SOIL_load_OGL_texture("playerSkin3X.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 	}
 	else if (shipChoice == 2) {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin1.png",
+		playerTextureID = SOIL_load_OGL_texture("playerSkin1X.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 	}
 	else {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin2.png",
+		playerTextureID = SOIL_load_OGL_texture("playerSkin2X.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -122,6 +122,14 @@ void PlayerShip::initialise()
 	playerPolyN.vert[2].y = playerPoly.vert[2].y = 4;
 	playerPolyN.vert[3].x = playerPoly.vert[3].x = -2;
 	playerPolyN.vert[3].y = playerPoly.vert[3].y = 4;
+}
+
+void PlayerShip::setPlayerJumpOn() {
+	jump = true;
+}
+
+bool PlayerShip::getPlayerJumpState() {
+	return jump;
 }
 
 double PlayerShip::getPlayerRot() {
@@ -342,7 +350,7 @@ void PlayerShip::render()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glBegin(GL_TRIANGLES);
-		glColor3f(1.0f, 1.0f, 1.0f);
+		glColor3f(0.0f, 0.0f, 1.0f);
 
 		glTexCoord2f(0, 0);
 		glVertex2f(-2, -2);//bottom left
