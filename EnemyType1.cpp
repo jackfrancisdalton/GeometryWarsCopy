@@ -21,7 +21,7 @@ EnemyType1::EnemyType1() : Enemy()
 	refreshWait = 1000;
 	refreshIndex = 1;
 	frameCounter = 0.0;
-	speed = 0;
+	speed = 20;
 	enemyPoly = polygon(4);
 	enemyPolyN = polygon(4);
 }

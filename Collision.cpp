@@ -74,7 +74,7 @@ int SATest(float *proj, float len)
 		if (proj[i]<min)min = proj[i];
 		else if (proj[i]>max)max = proj[i];
 	}
-	fprintf(stdout, "min = %f, max = %f\n", min, max);
+	//fprintf(stdout, "min = %f, max = %f\n", min, max);
 	// comparison noting that the first point of first poly is at distance 0 and the second point at distance len
 	// along the edge of the first poly acting as the axis
 	if (min > len || max < 0.0) return 1; // found separating axis

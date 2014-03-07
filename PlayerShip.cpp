@@ -338,7 +338,6 @@ void PlayerShip::render()
 		glRotated(rotateZ, 0.0, 0.0, 1);
 		glScaled(jumpStage, jumpStage, 3.0);
 
-
 		setTraMat(mb1, playerX, playerY, 0.0);
 		setRotMat(mb2, M_PI*rotateZ / 180.0, 2);
 		MultMat(mb1, mb2, mb);

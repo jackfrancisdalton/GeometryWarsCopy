@@ -22,8 +22,8 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 #define SHIELD_GROWTH_RATE 1.0
-#define CARRY_ON 50.0
-#define CARRY_ON_PLAYER 2.0
+#define CARRY_ON 1.0
+#define CARRY_ON_PLAYER 1.0
 #define ENEMY_SIZE 1.0
 
 static double collision_wait = 0;
@@ -86,7 +86,7 @@ void GameActivity::initialise()
 
 	mainHUD.initialise();
 	
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 5; i++) {
 		EnemyType1* e = new EnemyType1();
 		enemyList.push_back(e);
 	}
@@ -144,6 +144,13 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 	camX = player.getPlayerX();
 	camY = player.getPlayerY();
 
+
+	for each (Enemy* e in enemyList)
+	{
+		e->update(deltaT, prevDeltaT, camX, camY);
+	}
+	pad.update(deltaT, prevDeltaT, camX, camY);
+
 	/*
 	for (int i = 0; i < enemyList.size()-1; i++)
 	{
@@ -200,7 +207,7 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 			if (collision_wait > CARRY_ON_PLAYER) {
 				collision_flag = false;
 				collision_wait = 0;
-				e->setSpeed(20);
+				e->setSpeed(0);
 			}
 		}
 		else {
@@ -213,12 +220,7 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 		player.setPlayerJumpOn();
 	}
 
-	pad.update(deltaT, prevDeltaT, camX, camY);
-
-	for each (Enemy* e in enemyList)
-	{
-		e->update(deltaT, prevDeltaT, camX, camY);
-	}
+	
 }
 
 void GameActivity::render()
@@ -235,8 +237,6 @@ void GameActivity::render()
 			drawSquare(i, j, map[i][j]);
 		}
 	}
-
-	
 
 	for each (Enemy* var in enemyList)
 	{
@@ -310,7 +310,6 @@ void GameActivity::renderDebugGrid(float left, float bottom, float width, float 
 	{
 		glVertex2f(x, bottom);
 		glVertex2f(x, bottom + height);
-
 		x += dx;
 	}
 	
@@ -321,7 +320,6 @@ void GameActivity::renderDebugGrid(float left, float bottom, float width, float 
 	{
 		glVertex2f(left, y);
 		glVertex2f(left + width, y);
-
 		y += dy;
 	}
 
