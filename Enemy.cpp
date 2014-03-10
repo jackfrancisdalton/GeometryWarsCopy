@@ -35,8 +35,14 @@ polygon Enemy::getPolygonN()
 	return enemyPolyN;
 }
 
-void Enemy::setEnemyCollisionState(bool state) {
-	collisionState = state;
+int Enemy::getId()
+{
+	return id;
+}
+
+void Enemy::setCollisionFlag(bool val)
+{
+	collision_flag = val;
 }
 
 void Enemy::shutdown()

@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Activity.cpp" />
+    <ClCompile Include="BlackHole.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="EndScreenActivity.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -38,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Activity.h" />
+    <ClInclude Include="BlackHole.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="EndScreenActivity.h" />
     <ClInclude Include="Enemy.h" />

@@ -55,7 +55,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 		return 0;									// Quit If Window Was Not Created
 	}
 
-	while(!app.isApplicationFinished())				// Loop That Runs While the appliation is not finished yet
+	while (!app.isApplicationFinished())				// Loop That Runs While the appliation is not finished yet
 	{
 		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
 		{

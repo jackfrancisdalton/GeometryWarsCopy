@@ -4,7 +4,7 @@
 #include <math.h>
 #include "SOIL.h"
 #include "OpenGLApplication.h"		
-#include "JumpPad.h"
+#include "BlackHole.h"
 #include <random>
 
 #ifndef M_PI
@@ -12,9 +12,9 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 
-JumpPad::JumpPad() : Object()
+BlackHole::BlackHole() : Object()
 {
-	posX = 20;
+	posX = -20;
 	posY = 20;
 	objectPoly = polygon(4);
 	objectPolyN = polygon(4);
@@ -22,7 +22,7 @@ JumpPad::JumpPad() : Object()
 	rot = 1;
 }
 
-void JumpPad::initialise()
+void BlackHole::initialise()
 {
 	enemyTextureId = SOIL_load_OGL_texture("health_iconX.png",
 		SOIL_LOAD_AUTO,
@@ -39,12 +39,12 @@ void JumpPad::initialise()
 	objectPolyN.vert[3].y = objectPoly.vert[3].y = size;
 }
 
-void JumpPad::update(double deltaT, double prevDeltaT, double playerX, double playerY)
+void BlackHole::update(double deltaT, double prevDeltaT, double playerX, double playerY)
 {
 
 }
 
-void JumpPad::render()
+void BlackHole::render()
 {
 	glPushMatrix();
 

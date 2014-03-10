@@ -4,6 +4,7 @@
 #include "HUD.h"
 #include "Object.h"
 #include "JumpPad.h"
+#include "BlackHole.h"
 #include "Enemy.h"
 #include "EnemyType1.h"
 #include "EnemyType2.h"
@@ -18,6 +19,7 @@ class GameActivity : public Activity
 private:
 	double camX, camY, camRot;
 	double aspect;
+	BlackHole blackHole;
 	JumpPad pad;
 	PlayerShip player;
 	std::vector<Enemy*> enemyList;
@@ -27,14 +29,6 @@ private:
 	int mapWidth;
 	int mapHeight;
 
-	//RUDY'S CRAP ZONE
-	polygon EnemyPoly, EnemyPolyN, XEnemyPoly, XEnemyPolyN;
-	GLfloat xN, yN;
-	GLfloat dmove, dalpha, dspin, alpha, spin;
-	bool collision_flag;
-	GLuint texName;
-	float mb[16], mb1[16], mb2[16];
-
 public:
 	int chosenShipID;
 
@@ -43,7 +37,7 @@ public:
 
 	virtual void initialise();											// Called on application start up
 	virtual void shutdown();											// Called on application shut down
-	virtual void onSwitchIn();								// Activity switch in; called when the activity changes and this one switches in
+	virtual void onSwitchIn();											// Activity switch in; called when the activity changes and this one switches in
 	virtual void onReshape(int width, int height);						// called when the window is resized
 	virtual void update(double deltaT, double prevDeltaT);				// Update the application; if the current frame is frame number F, then the previous frame is F-1 and the one before that is F-2													// deltaT is the time elapsed from frame F-1 to frame F, prevDeltaT is the time elapsed from F-2 to F-1
 	virtual void render();												// Render function

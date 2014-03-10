@@ -75,19 +75,19 @@ PlayerShip::PlayerShip(int shipID)
 void PlayerShip::initialise()
 {
 	if (shipChoice == 1) {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin3X.png",
+		playerTextureID = SOIL_load_OGL_texture("playerSkin3.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 	}
 	else if (shipChoice == 2) {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin1X.png",
+		playerTextureID = SOIL_load_OGL_texture("playerSkin1.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 	}
 	else {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin2X.png",
+		playerTextureID = SOIL_load_OGL_texture("playerSkin2.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -262,8 +262,6 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 		}
 	}
 
-	
-
 	//***************************************JUMPING
 	if (inputState->isKeyPressed('J'))
 	{
@@ -329,6 +327,15 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 			}
 		}
 	}
+
+	setTraMat(mb1, playerX, playerY, 0.0);
+	setRotMat(mb2, M_PI*rotateZ / 180.0, 2);
+	MultMat(mb1, mb2, mb);
+	for (int i = 0; i < 4; ++i) {
+		MultMatPre2DPoint(mb, &playerPoly.vert[i], &playerPolyN.vert[i]);
+	}
+
+
 }
 
 void PlayerShip::render()
@@ -338,18 +345,13 @@ void PlayerShip::render()
 		glRotated(rotateZ, 0.0, 0.0, 1);
 		glScaled(jumpStage, jumpStage, 3.0);
 
-		setTraMat(mb1, playerX, playerY, 0.0);
-		setRotMat(mb2, M_PI*rotateZ / 180.0, 2);
-		MultMat(mb1, mb2, mb);
-		for (int i = 0; i<4; ++i)MultMatPre2DPoint(mb, &playerPoly.vert[i], &playerPolyN.vert[i]);
-
 		glBindTexture(GL_TEXTURE_2D, playerTextureID);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glBegin(GL_TRIANGLES);
-		glColor3f(0.0f, 0.0f, 1.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
 
 		glTexCoord2f(0, 0);
 		glVertex2f(-2, -2);//bottom left

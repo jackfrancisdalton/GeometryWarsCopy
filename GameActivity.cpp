@@ -22,11 +22,14 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 #define SHIELD_GROWTH_RATE 1.0
-#define CARRY_ON 1.0
-#define CARRY_ON_PLAYER 1.0
-#define ENEMY_SIZE 1.0
+#define CARRY_ON_ENEMY 2.0
+#define CARRY_ON_PLAYER 2.0
+#define CARRY_ON_JUMP 5.0
 
-static double collision_wait = 0;
+
+static double enemy_to_player_collision_wait = 0;
+static double enemy_to_enemy_collision_wait = 0;
+static int count_until_collision = 0;
 
 char map[20][20] = {
 	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
@@ -58,12 +61,21 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 	mainHUD = HUD();
 	mapWidth = 20;
 	mapHeight = 20;
-	pad = JumpPad();
-
 }
 
 void GameActivity::initialise()
 {
+	AllocConsole();
+	freopen("CONOUT$", "w", stdout);
+
+	player = PlayerShip(chosenShipID);
+	player.initialise();
+	pad = JumpPad();
+	blackHole = BlackHole();
+	blackHole.initialise();
+	pad.initialise();
+	mainHUD.initialise();
+
 	vertWall = SOIL_load_OGL_texture("vert-wall.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
@@ -84,13 +96,12 @@ void GameActivity::initialise()
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
-	mainHUD.initialise();
-	
-	for (int i = 0; i < 5; i++) {
-		EnemyType1* e = new EnemyType1();
+	for (int i = 0; i < 20; i++) {
+		EnemyType1* e = new EnemyType1(i);
+		e->initialise();
 		enemyList.push_back(e);
 	}
-
+	
 	/*
 	for (int i = 0; i < 20; i++) {
 		EnemyType2* g = new EnemyType2();
@@ -102,12 +113,7 @@ void GameActivity::initialise()
 		enemyList.push_back(g);
 	}
 	*/
-	for each (Enemy* e in enemyList)
-	{
-		e->initialise();
-	}
-
-	pad.initialise();
+	std::cout << "Created " << enemyList.size() << " enemies" << std::endl;
 }
 
 void GameActivity::shutdown()
@@ -118,8 +124,6 @@ void GameActivity::shutdown()
 void GameActivity::onSwitchIn()
 {
 	glClearColor(0.0,0.0,0.0,0.0);						//sets the clear colour to black
-	player = PlayerShip(chosenShipID);
-	player.initialise();
 }
 
 void GameActivity::onReshape(int width, int height)
@@ -136,20 +140,17 @@ void GameActivity::onReshape(int width, int height)
 
 void GameActivity::update(double deltaT, double prevDeltaT)
 {
-	AllocConsole();
-	freopen("CONOUT$", "w", stdout);
-
 	player.update(deltaT, prevDeltaT, inputState);
 	camRot = player.getPlayerRot();
 	camX = player.getPlayerX();
 	camY = player.getPlayerY();
-
 
 	for each (Enemy* e in enemyList)
 	{
 		e->update(deltaT, prevDeltaT, camX, camY);
 	}
 	pad.update(deltaT, prevDeltaT, camX, camY);
+	blackHole.update(deltaT, prevDeltaT, camX, camY);
 
 	/*
 	for (int i = 0; i < enemyList.size()-1; i++)
@@ -183,10 +184,10 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 			if (e != f) {
 				if (!SAT2D(&e->getPolygonN(), &f->getPolygonN())){
 					collision_flag = true;
-					collision_wait++;
-					if (collision_wait>CARRY_ON) {
+					enemy_to_enemy_collision_wait++;
+					if (enemy_to_enemy_collision_wait>CARRY_ON_ENEMY) {
 						collision_flag = false;
-						collision_wait = 0;
+						enemy_to_enemy_collision_wait = 0;
 						e->setSpeed(0);
 						f->setSpeed(0);
 					}
@@ -198,29 +199,26 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 		}
 	}
 	*/
-
 	for each (Enemy* e in enemyList)
 	{
 		if ((!SAT2D(&player.getPolygonN(), &e->getPolygonN())) && player.getPlayerJumpState() == false) {
-			collision_flag = true;
-			collision_wait++;
-			if (collision_wait > CARRY_ON_PLAYER) {
-				collision_flag = false;
-				collision_wait = 0;
+			e->setCollisionFlag(true);
+			enemy_to_player_collision_wait++;
+			if (enemy_to_player_collision_wait > CARRY_ON_PLAYER) {
+				//std::cout << "Player has collided with enemy " << e->getId() << std::endl;
+				e->setCollisionFlag(false);
+				enemy_to_player_collision_wait = 0;
 				e->setSpeed(0);
 			}
 		}
 		else {
-			collision_flag = false;
+			e->setCollisionFlag(false);
 		}
 	}
-
 
 	if (!SAT2D(&player.getPolygonN(), &pad.getPolygonN())) {
 		player.setPlayerJumpOn();
 	}
-
-	
 }
 
 void GameActivity::render()
@@ -230,7 +228,9 @@ void GameActivity::render()
 	mainHUD.render();
 	glRotated(-camRot,0.0, 0.0, 1);
 	glTranslated(-camX, -camY, 0.0);
-	//renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);
+
+
+	renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);
 	
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 20; j++) {
@@ -238,12 +238,13 @@ void GameActivity::render()
 		}
 	}
 
-	for each (Enemy* var in enemyList)
+	for each (Enemy* e in enemyList)
 	{
-		var->render();
+		e->render();
 	}
-
+	
 	pad.render();
+	blackHole.render();
 	player.render();
 
 	glFlush();
@@ -300,7 +301,7 @@ void GameActivity::onKeyUp(int key)
 
 void GameActivity::renderDebugGrid(float left, float bottom, float width, float height, int hSegments, int vSegments)
 {
-	glColor3f(0.4f, 0.4f, 0.4f);
+	glColor3f(0.4f, 0.4f, 1.0f);
 	glBegin(GL_LINES);
 
 	// Vertical lines

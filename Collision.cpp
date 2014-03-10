@@ -63,7 +63,7 @@ int SAT2D(polygon *p1, polygon *p2) // Note that this function can be made much 
 	//fprintf(stdout,"4 - %f %f, %f %f %f %f, %f\n",axis[0],axis[1],proj[0],proj[1],proj[2],proj[3],len);
 	if (SATest(proj, len)) return 1;
 
-	fprintf(stdout, "No separating axis found!\n");
+	//fprintf(stdout, "No separating axis found!\n");
 	return 0;
 }
 
