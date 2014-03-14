@@ -9,6 +9,7 @@
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
 #define ROTATION_SPIKE_BALL_SPEED 500.0
+#define RESPAWN_STATE_TIME 20.0
 #define JUMP_HEIGHT 2.5
 #define SHIELD_OSCILATION_SPEED 1.5
 #define SHIELD_GROWTH_RATE 1.0
@@ -37,11 +38,13 @@ PlayerShip::PlayerShip(int shipID)
 	shieldOn = false;
 	shieldTime = 0.0;
 	shieldScale = 0.0;
-
+	collisionWait = 0.0;
+	respawnState = false;
+	respawnTimer = 0.0;
+	lives = 3;
 	powerORBSize = 0.0;
 	powerORBMaxSize = 2.0;
 	powerORBTranslateY = 2.0;
-	attackZ = 0.0;
 	maxSpeed = defaultMaxSpeed = 6.0;
 	currentSpeed = 0.0;
 	rotationSpeed = 150;
@@ -53,11 +56,13 @@ PlayerShip::PlayerShip(int shipID)
 	rocketFlamesScaleX = 0.0;
 	powerORBOn = false;
 	boostOn = false;
-	HitRadius = 1;
 	directionChangeSpeed = 0.1;
-
+	respawnstateOpacity = 1.0;
 	playerPoly = polygon(4);
 	playerPolyN = polygon(4);
+	boosterR = 1.0;
+	boosterG = 1.0;
+	boosterB = 1.0;
 
 	if (shipChoice == 1) {
 		rotationSpeed = 500;
@@ -81,7 +86,7 @@ void PlayerShip::initialise()
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 	}
 	else if (shipChoice == 2) {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin1.png",
+		playerTextureID = SOIL_load_OGL_texture("ship-sprite-sheet.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -122,26 +127,6 @@ void PlayerShip::initialise()
 	playerPolyN.vert[2].y = playerPoly.vert[2].y = 4;
 	playerPolyN.vert[3].x = playerPoly.vert[3].x = -2;
 	playerPolyN.vert[3].y = playerPoly.vert[3].y = 4;
-}
-
-void PlayerShip::setPlayerJumpOn() {
-	jump = true;
-}
-
-bool PlayerShip::getPlayerJumpState() {
-	return jump;
-}
-
-double PlayerShip::getPlayerRot() {
-	return rotateZ;
-}
-
-double PlayerShip::getPlayerX() {
-	return playerX;
-}
-
-double PlayerShip::getPlayerY() {
-	return playerY;
 }
 
 void PlayerShip::shutdown()
@@ -242,13 +227,27 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 
 	if(inputState->isKeyPressed('D'))
 	{
+		booster1X = 0.9;
+		booster2X = -0.2;
 		rotateZ -= rotationSpeed * deltaT;
+		spriteX = 1;
+		booster1Y = -2.3;
+
 	}
-	if(inputState->isKeyPressed('A'))
+	 else if(inputState->isKeyPressed('A'))
 	{
 		rotateZ += rotationSpeed * deltaT;
+		spriteX = 0.666666;
+		booster1X = -0.9;
+		booster2X = 0.2;
+		booster1Y = -2.3;
 	}
-
+	 else {
+		 booster1X = -0.7;
+		 booster2X = 0.5;
+		 spriteX = 0.33333333333;
+		 booster1Y = booster2Y = -2.6;
+	 }
 	//**************************************ATTACK AND BOOST
 	if (boostOn == true) {
 		maxSpeed = boostSpeed;
@@ -328,14 +327,26 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 		}
 	}
 
+	//****************************************RESPAWN/DEATH STATE
+	if (respawnState == true) {
+		respawnTimer += 0.1;
+		if (respawnTimer > RESPAWN_STATE_TIME) {
+			respawnState = false;
+			respawnTimer = 0.0;
+			respawnstateOpacity = 1.0;
+		}
+		else {
+			respawnstateOpacity = 0.4;
+		}
+	}
+
+	//****************************************MATRIX COLLISION
 	setTraMat(mb1, playerX, playerY, 0.0);
 	setRotMat(mb2, M_PI*rotateZ / 180.0, 2);
 	MultMat(mb1, mb2, mb);
 	for (int i = 0; i < 4; ++i) {
 		MultMatPre2DPoint(mb, &playerPoly.vert[i], &playerPolyN.vert[i]);
 	}
-
-
 }
 
 void PlayerShip::render()
@@ -348,27 +359,27 @@ void PlayerShip::render()
 		glBindTexture(GL_TEXTURE_2D, playerTextureID);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA );
 
 		glBegin(GL_TRIANGLES);
-		glColor3f(1.0f, 1.0f, 1.0f);
+		glColor4f(1.0f, 1.0, 1.0f, respawnstateOpacity);
 
-		glTexCoord2f(0, 0);
+		glTexCoord2f(spriteX - 0.3333, 0);
 		glVertex2f(-2, -2);//bottom left
 
-		glTexCoord2f(1, 0);
+		glTexCoord2f(spriteX, 0);
 		glVertex2f(2, -2);//bottom right
 
-		glTexCoord2f(0, 1);
+		glTexCoord2f(spriteX - 0.333, 1);
 		glVertex2f(-2, 4);//top left
 
-		glTexCoord2f(1, 0);
+		glTexCoord2f(spriteX, 0);
 		glVertex2f(2, -2);//bottom right
 
-		glTexCoord2f(1, 1);
+		glTexCoord2f(spriteX, 1);
 		glVertex2f(2, 4);//top right
 
-		glTexCoord2f(0, 1);
+		glTexCoord2f(spriteX - 0.3333, 1);
 		glVertex2f(-2, 4);//top left
 		glEnd();
 
@@ -380,7 +391,7 @@ void PlayerShip::render()
 		//Booster 1
 		glPushMatrix();
 			
-			glTranslated(-0.8,-2.6,0.0);
+			glTranslated(booster1X, booster1Y,0.0);
 			glScaled(fscale, fscale, 1.0);
 
 			glBindTexture(GL_TEXTURE_2D, rocketBooster);
@@ -389,25 +400,26 @@ void PlayerShip::render()
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			glBegin(GL_TRIANGLES);
-			glColor3f(1.0f, 1.0f, 1.0f);
+	
+				glColor3f(boosterR, boosterG, boosterB);
 
-			glTexCoord2f(0, 0);
-			glVertex2f(-0.6, -1);
+				glTexCoord2f(0, 0);
+				glVertex2f(-0.6, -1);
 
-			glTexCoord2f(1, 0);
-			glVertex2f(0.6, -1);
+				glTexCoord2f(1, 0);
+				glVertex2f(0.6, -1);
 
-			glTexCoord2f(0, 1);
-			glVertex2f(-0.6, 1);
+				glTexCoord2f(0, 1);
+				glVertex2f(-0.6, 1);
 
-			glTexCoord2f(1, 0);
-			glVertex2f(0.6, -1);
+				glTexCoord2f(1, 0);
+				glVertex2f(0.6, -1);
 
-			glTexCoord2f(1, 1);
-			glVertex2f(0.6, 1);
+				glTexCoord2f(1, 1);
+				glVertex2f(0.6, 1);
 
-			glTexCoord2f(0, 1);
-			glVertex2f(-0.6, 1);
+				glTexCoord2f(0, 1);
+				glVertex2f(-0.6, 1);
 			glEnd();
 
 			glDisable(GL_BLEND);
@@ -417,7 +429,7 @@ void PlayerShip::render()
 		//Booster 2
 		glPushMatrix();
 			
-			glTranslated(0.6, -2.6, 0.0);
+		glTranslated(booster2X, booster2Y, 0.0);
 			glScaled(fscale, fscale, 1.0);
 
 			glBindTexture(GL_TEXTURE_2D, rocketBooster);
@@ -426,25 +438,25 @@ void PlayerShip::render()
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			glBegin(GL_TRIANGLES);
-			glColor3f(1.0f, 1.0f, 1.0f);
+				glColor3f(boosterR, boosterG, boosterB);
 
-			glTexCoord2f(0, 0);
-			glVertex2f(-0.6, -1);
+				glTexCoord2f(0, 0);
+				glVertex2f(-0.6, -1);
 
-			glTexCoord2f(1, 0);
-			glVertex2f(0.6, -1);
+				glTexCoord2f(1, 0);
+				glVertex2f(0.6, -1);
 
-			glTexCoord2f(0, 1);
-			glVertex2f(-0.6, 1);
+				glTexCoord2f(0, 1);
+				glVertex2f(-0.6, 1);
 
-			glTexCoord2f(1, 0);
-			glVertex2f(0.6, -1);
+				glTexCoord2f(1, 0);
+				glVertex2f(0.6, -1);
 
-			glTexCoord2f(1, 1);
-			glVertex2f(0.6, 1);
+				glTexCoord2f(1, 1);
+				glVertex2f(0.6, 1);
 
-			glTexCoord2f(0, 1);
-			glVertex2f(-0.6, 1);
+				glTexCoord2f(0, 1);
+				glVertex2f(-0.6, 1);
 			glEnd();
 
 			glDisable(GL_BLEND);
@@ -528,6 +540,48 @@ void PlayerShip::render()
 	glPopMatrix();
 }
 
+void PlayerShip::setPlayerJumpOn() {
+	jump = true;
+}
+
+void PlayerShip::setBlackHoleSlowOn() {
+	if (currentSpeed > 2) {
+		currentSpeed = currentSpeed - 0.3;
+	}
+	else if (currentSpeed < -2) {
+		currentSpeed = currentSpeed + 0.3;
+	}
+
+}
+
+double PlayerShip::getPlayerRot() {
+	return rotateZ;
+}
+
+double PlayerShip::getPlayerX() {
+	return playerX;
+}
+
+double PlayerShip::getPlayerY() {
+	return playerY;
+}
+
+double PlayerShip::getCollisionWait() {
+	return collisionWait;
+}
+
+bool PlayerShip::checkShouldColide() {
+
+	if (respawnState == true || jump == true) {
+		return true;
+	}
+	return false;
+}
+
+void PlayerShip::incrementCollisionWait() {
+	collisionWait++;
+}
+
 void PlayerShip::shieldToggle() {
 	if (!shieldOn) {
 		shieldScale = 0.0;
@@ -543,15 +597,32 @@ void PlayerShip::powerBallToggle() {
 	powerORBOn = !powerORBOn;
 }
 
+void PlayerShip::setRespawnState() {
+	respawnState = true;
+	currentSpeed = 0; 
+	if (lives > 0) {
+		lives--;
+	}
+}
+
+int PlayerShip::getLivesCount() {
+	return lives;
+}
+
 void PlayerShip::boostToggleOn()
 {
 	boostOn = true;
+	boosterR = 0.0;
+	boosterG = 1.0;
+	boosterB = 0.0;
 }
 
 void PlayerShip::boostToggleOff()
 {
 	boostOn = false;
-	//currentSpeed = defaultMaxSpeed;
+	boosterR = 1.0;
+	boosterG = 1.0;
+	boosterB = 1.0;
 }
 
 polygon PlayerShip::getPolygonN()

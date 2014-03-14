@@ -10,7 +10,7 @@
 class Object
 {
 protected:
-	GLuint enemyTextureId;
+	GLuint objectTextureId;
 	double posX, posY, rot;
 	double size;
 	polygon objectPoly, objectPolyN;
@@ -18,6 +18,8 @@ protected:
 public:
 	Object();
 	polygon getPolygonN();
+	virtual void update(double deltaT, double prevDeltaT) = 0;
+	virtual void render() = 0;
 };
 
 #endif 

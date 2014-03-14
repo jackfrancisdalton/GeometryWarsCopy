@@ -6,31 +6,57 @@ class PlayerShip
 {
 private:
 	GLuint playerTextureID, rocketBooster, spikeBallTextureID, shieldTextureID, shieldHitTextureID;
+	int lives;
+
 	double playerX;
 	double playerY;
 	double rotateZ;
+
+	//MOVMENT
+	double rotationSpeed;
+	double currentSpeed, maxSpeed, defaultMaxSpeed, boostSpeed;
+	double acceleration, decceleration;
+	double directionChangeSpeed;
+
+	//TOGGLES
 	bool boostOn;
+	bool powerORBOn;
+	bool shieldOn;
+	bool respawnState;
+
+	//JUMP
 	double jumpStage;
 	bool falling;
 	bool jump;
+
+	//SHIELD
 	double shieldTime;
-	double powerORBRotate;
-	double attackZ;
-	bool powerORBOn;
-	double powerORBSize, powerORBMaxSize;
-	bool shieldOn;
 	double shieldScale;
+
+	//POWER ORB
+	double powerORBRotate;
+	double powerORBSize, powerORBMaxSize;
 	double powerORBTranslateY;
-	double rotationSpeed;
-	double maxSpeed, defaultMaxSpeed, boostSpeed;
-	double currentSpeed, acceleration, decceleration;
+	
+	//RESPAWN SATE
+	double respawnTimer;
+	double respawnstateOpacity;
+	
+	//VISUAL
 	int shipChoice;
 	double rocketFlamesScaleY;
 	double rocketFlamesScaleX;
-	double HitRadius;
+	float boosterR, boosterG, boosterB;
+	double spriteX, spriteY;
+	double booster1X = 0.8;
+	double booster2X = 0.8;
+	double booster1Y, booster2Y = -2.6;
+	double boosterOpacity;
+
+	//COLLISION
 	polygon playerPoly, playerPolyN;
-	double directionChangeSpeed;
 	float mb[16], mb1[16], mb2[16];
+	double collisionWait;
 
 
 public:
@@ -41,15 +67,24 @@ public:
 	virtual void boostToggleOn();
 	virtual void boostToggleOff();
 	virtual void shieldToggle();
+
+	virtual void setRespawnState();
 	virtual void setPlayerJumpOn();
-	virtual bool getPlayerJumpState();
+	virtual void setBlackHoleSlowOn();
+
+	virtual bool checkShouldColide();
+
 	virtual double getPlayerRot();
 	virtual double getPlayerX();
 	virtual double getPlayerY();
 	virtual polygon getPolygonN();
-	virtual void initialise();											// Called on application start up
-	virtual void shutdown();											// Called on application shut down
-	virtual void onSwitchIn();											// Activity switch in; called when the activity changes and this one switches in
+	virtual int getLivesCount();
+	virtual double getCollisionWait();
+
+	virtual void incrementCollisionWait();
+	virtual void initialise();											
+	virtual void shutdown();											
+	virtual void onSwitchIn();											
 	virtual void update(double deltaT, double prevDeltaT, InputState *inputState);
-	virtual void render();												// Render function
+	virtual void render();												
 };

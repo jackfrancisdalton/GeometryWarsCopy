@@ -13,20 +13,18 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 
-static int posXval = 5;
-static int posYval = 5;
-
 EnemyType1::EnemyType1() : Enemy()
 {
 	textureX = textureY = 0.25;
 	refreshWait = 1000;
 	refreshIndex = 1;
 	frameCounter = 0.0;
-	speed = 2;
+	speed = defaultSpeed = 10;
 	enemyPoly = polygon(4);
 	enemyPolyN = polygon(4);
+	blackHoleCollsion = false;
 }
-
+/* use for testing enemies
 EnemyType1::EnemyType1(int idVal) : Enemy()
 {
 	id = idVal;
@@ -37,19 +35,18 @@ EnemyType1::EnemyType1(int idVal) : Enemy()
 	speed = 10;
 	enemyPoly = polygon(4);
 	enemyPolyN = polygon(4);
-	collision_flag = false;
 }
-
+*/
 void EnemyType1::initialise()
 {
-	enemyTextureId = SOIL_load_OGL_texture("playerTexture1.png",
+	enemyTextureId = SOIL_load_OGL_texture("square-enemy.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
 	//srand(time(NULL));
-	posX = (rand() % 10 +2) * 10;
-	posY = (rand() % 10 +2) * 10;
+	posX = (rand() % 10 - 5) * 20;
+	posY = (rand() % 10 - 5) * 20;
 	rot = 0.0;
 
 	enemyPolyN.vert[0].x = enemyPoly.vert[0].x = -enemySize;
@@ -91,21 +88,19 @@ void EnemyType1::update(double deltaT, double prevDeltaT, double playerX, double
 	for (int i = 0; i < 4; ++i){
 		MultMatPre2DPoint(mb, &enemyPoly.vert[i], &enemyPolyN.vert[i]);
 	}
-
 }
 
 void EnemyType1::render()
 {
 	glPushMatrix();
-
 	glTranslated(posX, posY, 0.0);
 	glRotated(rot, 0.0, 0.0, 1.0);
-
+	
 	glBindTexture(GL_TEXTURE_2D, enemyTextureId);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 
 
 	glBegin(GL_QUADS);
@@ -118,4 +113,14 @@ void EnemyType1::render()
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
+}
+
+void EnemyType1::BlackHoleCollisionOn()
+{
+	blackHoleCollsion = true;
+}
+
+void EnemyType1::BlackHoleCollisionOff()
+{
+	blackHoleCollsion = false;
 }

@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="Activity.cpp" />
     <ClCompile Include="BlackHole.cpp" />
+    <ClCompile Include="Collectable.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="EndScreenActivity.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -32,6 +33,7 @@
     <ClCompile Include="PlayerShip.cpp" />
     <ClCompile Include="PolyObjects.cpp" />
     <ClCompile Include="SelectScreenActivity.cpp" />
+    <ClCompile Include="ShieldPickUp.cpp" />
     <ClCompile Include="SOIL.c" />
     <ClCompile Include="StartScreenActivity.cpp" />
     <ClCompile Include="stb_image_aug.c" />
@@ -40,6 +42,7 @@
   <ItemGroup>
     <ClInclude Include="Activity.h" />
     <ClInclude Include="BlackHole.h" />
+    <ClInclude Include="Collectable.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="EndScreenActivity.h" />
     <ClInclude Include="Enemy.h" />
@@ -59,6 +62,7 @@
     <ClInclude Include="PlayerShip.h" />
     <ClInclude Include="PolyObjects.h" />
     <ClInclude Include="SelectScreenActivity.h" />
+    <ClInclude Include="ShieldPickUp.h" />
     <ClInclude Include="SOIL.h" />
     <ClInclude Include="StartScreenActivity.h" />
     <ClInclude Include="stbi_DDS_aug.h" />

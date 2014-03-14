@@ -19,8 +19,10 @@ class GameActivity : public Activity
 private:
 	double camX, camY, camRot;
 	double aspect;
-	BlackHole blackHole;
-	JumpPad pad;
+	//BlackHole blackHole;
+	//JumpPad pad;
+	std::vector<JumpPad*> jumpPadList;
+	std::vector<BlackHole*> blackHoleList;
 	PlayerShip player;
 	std::vector<Enemy*> enemyList;
 	HUD mainHUD;
@@ -48,7 +50,7 @@ public:
 	virtual void onKeyDown(int key);									// Called when key pressed
 	virtual void onKeyUp(int key);										// Called when key released
 	virtual void drawSquare(double posX, double posY, GLuint mapId);
-	//virtual void matrixFiller(char *map, int width, int height);
+	virtual void matrixFiller(char *map, int width, int height);
 
 	// Drawing a grid in the background; useful for debugging
 	void renderDebugGrid(float left, float bottom, float width, float height, int hSegments, int vSegments);

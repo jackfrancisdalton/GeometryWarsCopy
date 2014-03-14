@@ -40,9 +40,14 @@ int Enemy::getId()
 	return id;
 }
 
-void Enemy::setCollisionFlag(bool val)
+double Enemy::getDefaultSpeed()
 {
-	collision_flag = val;
+	return defaultSpeed;
+}
+
+double Enemy::getSpeed()
+{
+	return speed;
 }
 
 void Enemy::shutdown()

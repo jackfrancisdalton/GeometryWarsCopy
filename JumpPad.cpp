@@ -14,8 +14,8 @@
 
 JumpPad::JumpPad() : Object()
 {
-	posX = 20;
-	posY = 20;
+	posX = rand() % 30 + 10;
+	posY = rand() % 30 + 10;
 	objectPoly = polygon(4);
 	objectPolyN = polygon(4);
 	size = 6;
@@ -24,7 +24,7 @@ JumpPad::JumpPad() : Object()
 
 void JumpPad::initialise()
 {
-	enemyTextureId = SOIL_load_OGL_texture("health_iconX.png",
+	objectTextureId = SOIL_load_OGL_texture("jump-pad.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -39,9 +39,19 @@ void JumpPad::initialise()
 	objectPolyN.vert[3].y = objectPoly.vert[3].y = size;
 }
 
-void JumpPad::update(double deltaT, double prevDeltaT, double playerX, double playerY)
+void JumpPad::update(double deltaT, double prevDeltaT)
 {
+	if (rot < 360) {
+		rot += 30 * deltaT;
+	}
+	else {
+		rot = 0;
+	}
 
+	setTraMat(mb1, posX, posY, 0.0);
+	setRotMat(mb2, M_PI*rot / 180.0, 2);
+	MultMat(mb1, mb2, mb);
+	for (int i = 0; i<4; ++i)MultMatPre2DPoint(mb, &objectPoly.vert[i], &objectPolyN.vert[i]);
 }
 
 void JumpPad::render()
@@ -51,16 +61,13 @@ void JumpPad::render()
 	glTranslated(posX, posY, 1.0);
 	glRotated(rot, 0.0, 0.0, 1.0);
 
-	glBindTexture(GL_TEXTURE_2D, enemyTextureId);
+	glBindTexture(GL_TEXTURE_2D, objectTextureId);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor3f(1.0f, 1.0f, 1.0f);
 
-	setTraMat(mb1, posX, posY, 0.0);
-	setRotMat(mb2, M_PI*rot / 180.0, 2);
-	MultMat(mb1, mb2, mb);
-	for (int i = 0; i<4; ++i)MultMatPre2DPoint(mb, &objectPoly.vert[i], &objectPolyN.vert[i]);
+	
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0, 0.0); glVertex2f(-size, -size);

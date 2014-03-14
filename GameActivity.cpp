@@ -12,7 +12,7 @@
 
 #define MAP_SIZEX 10
 #define MAP_SIZEY 10
-#define VIEW_SIZE 60.0
+#define VIEW_SIZE 140.0
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
 #define JUMP_HEIGHT 2.5
@@ -23,13 +23,8 @@
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 #define SHIELD_GROWTH_RATE 1.0
 #define CARRY_ON_ENEMY 2.0
-#define CARRY_ON_PLAYER 2.0
+#define CARRY_ON_PLAYER 0.0
 #define CARRY_ON_JUMP 5.0
-
-
-static double enemy_to_player_collision_wait = 0;
-static double enemy_to_enemy_collision_wait = 0;
-static int count_until_collision = 0;
 
 char map[20][20] = {
 	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
@@ -61,6 +56,22 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 	mainHUD = HUD();
 	mapWidth = 20;
 	mapHeight = 20;
+
+	for (int i = 0; i < 30; i++) {
+		EnemyType1* e = new EnemyType1();
+		enemyList.push_back(e);
+	}
+	for (int i = 0; i < 2; i++) {
+		JumpPad* p = new JumpPad();
+		p->initialise();
+		jumpPadList.push_back(p);
+	}
+
+	for (int i = 0; i < 5; i++) {
+		BlackHole* b = new BlackHole();
+		b->initialise();
+		blackHoleList.push_back(b);
+	}
 }
 
 void GameActivity::initialise()
@@ -70,11 +81,11 @@ void GameActivity::initialise()
 
 	player = PlayerShip(chosenShipID);
 	player.initialise();
-	pad = JumpPad();
-	blackHole = BlackHole();
-	blackHole.initialise();
-	pad.initialise();
-	mainHUD.initialise();
+	for each (Enemy* e in enemyList) {
+		e->initialise();
+	}
+
+	//mainHUD.initialise();
 
 	vertWall = SOIL_load_OGL_texture("vert-wall.png",
 		SOIL_LOAD_AUTO,
@@ -95,25 +106,6 @@ void GameActivity::initialise()
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-
-	for (int i = 0; i < 20; i++) {
-		EnemyType1* e = new EnemyType1(i);
-		e->initialise();
-		enemyList.push_back(e);
-	}
-	
-	/*
-	for (int i = 0; i < 20; i++) {
-		EnemyType2* g = new EnemyType2();
-		enemyList.push_back(g);
-	}
-	
-	for (int i = 0; i < 20; i++) {
-		EnemyType3* g = new EnemyType3();
-		enemyList.push_back(g);
-	}
-	*/
-	std::cout << "Created " << enemyList.size() << " enemies" << std::endl;
 }
 
 void GameActivity::shutdown()
@@ -149,75 +141,76 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 	{
 		e->update(deltaT, prevDeltaT, camX, camY);
 	}
-	pad.update(deltaT, prevDeltaT, camX, camY);
-	blackHole.update(deltaT, prevDeltaT, camX, camY);
 
-	/*
+	for each (BlackHole* b in blackHoleList)
+	{
+		b->update(deltaT, prevDeltaT);
+	}
+
+	for each (JumpPad* j in jumpPadList)
+	{
+		j->update(deltaT, prevDeltaT);
+	}
+
 	for (int i = 0; i < enemyList.size()-1; i++)
 	{
 		for (int j = i+1; j < enemyList.size(); j++)
 		{
 			if (!SAT2D(&enemyList.at(i)->getPolygonN(), &enemyList.at(j)->getPolygonN())){
-				collision_flag = true;
-				collision_wait++;
-				if (collision_wait>CARRY_ON){
-					enemyList.at(i)->setSpeed(1);
-					enemyList.at(j)->setSpeed(1);
-					collision_flag = false;
-					collision_wait = 0;
-					dmove *= -2.0;
+				//enemyList.at(i)->setSpeed(1);
+				//enemyList.at(j)->setSpeed(1);
+			}
+		}
+	}
+	
+	for (int i = 0; i < enemyList.size(); i++) {
+
+		if ((!SAT2D(&player.getPolygonN(), &enemyList.at(i)->getPolygonN())) && player.checkShouldColide() == false) 
+		{
+			player.setRespawnState();
+			enemyList.erase(enemyList.begin()+i);
+			if (player.getLivesCount() == 0) {
+				app->setCurrentActivity(app->endScreen);
+			}
+		}
+	}
+	
+	for each(JumpPad* p in jumpPadList) 
+	{
+		if (!SAT2D(&player.getPolygonN(), &p->getPolygonN()))
+		{
+			player.setPlayerJumpOn();
+		}
+	}
+	
+	for each(BlackHole* b in blackHoleList)
+	{
+		if (!SAT2D(&player.getPolygonN(), &b->getPolygonN()) && player.checkShouldColide() == false)
+		{
+			player.setBlackHoleSlowOn();
+		}
+	}
+	
+	for (int i = 0; i < enemyList.size(); i++) 
+	{
+		int collideAllTest = 0;
+		for each ( BlackHole* b in blackHoleList)
+		{
+			
+			if (!SAT2D(&enemyList.at(i)->getPolygonN(), &b->getPolygonN()))
+			{
+				if (enemyList.at(i)->getSpeed() > 4)
+				{
+					enemyList.at(i)->setSpeed(enemyList.at(i)->getSpeed() - 0.5);
 				}
 			}
 			else {
-				collision_flag = false;
-				spin += dspin;
-				if (spin >= 360)spin = 0.0;
+				collideAllTest++;
 			}
 		}
-	}
-	*/
-	/*
-	for each (Enemy* e in enemyList)
-	{
-		for each (Enemy* f in enemyList)
-		{
-			if (e != f) {
-				if (!SAT2D(&e->getPolygonN(), &f->getPolygonN())){
-					collision_flag = true;
-					enemy_to_enemy_collision_wait++;
-					if (enemy_to_enemy_collision_wait>CARRY_ON_ENEMY) {
-						collision_flag = false;
-						enemy_to_enemy_collision_wait = 0;
-						e->setSpeed(0);
-						f->setSpeed(0);
-					}
-				}
-				else {
-					collision_flag = false;
-				}
-			}
+		if (collideAllTest == blackHoleList.size()) {
+			enemyList.at(i)->setSpeed(enemyList.at(i)->getDefaultSpeed());
 		}
-	}
-	*/
-	for each (Enemy* e in enemyList)
-	{
-		if ((!SAT2D(&player.getPolygonN(), &e->getPolygonN())) && player.getPlayerJumpState() == false) {
-			e->setCollisionFlag(true);
-			enemy_to_player_collision_wait++;
-			if (enemy_to_player_collision_wait > CARRY_ON_PLAYER) {
-				//std::cout << "Player has collided with enemy " << e->getId() << std::endl;
-				e->setCollisionFlag(false);
-				enemy_to_player_collision_wait = 0;
-				e->setSpeed(0);
-			}
-		}
-		else {
-			e->setCollisionFlag(false);
-		}
-	}
-
-	if (!SAT2D(&player.getPolygonN(), &pad.getPolygonN())) {
-		player.setPlayerJumpOn();
 	}
 }
 
@@ -225,10 +218,9 @@ void GameActivity::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
-	mainHUD.render();
+
 	glRotated(-camRot,0.0, 0.0, 1);
 	glTranslated(-camX, -camY, 0.0);
-
 
 	renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);
 	
@@ -237,16 +229,26 @@ void GameActivity::render()
 			drawSquare(i, j, map[i][j]);
 		}
 	}
+	
+	
+
+	for each (BlackHole* b in blackHoleList)
+	{
+		b->render();
+	}
+
+	for each (JumpPad* j in jumpPadList)
+	{
+		j->render();
+	}
 
 	for each (Enemy* e in enemyList)
 	{
 		e->render();
 	}
-	
-	pad.render();
-	blackHole.render();
+	//mainHUD.render();
 	player.render();
-
+	
 	glFlush();
 }
 
@@ -298,7 +300,6 @@ void GameActivity::onKeyUp(int key)
 	}
 }
 
-
 void GameActivity::renderDebugGrid(float left, float bottom, float width, float height, int hSegments, int vSegments)
 {
 	glColor3f(0.4f, 0.4f, 1.0f);
@@ -326,13 +327,14 @@ void GameActivity::renderDebugGrid(float left, float bottom, float width, float 
 
 	glEnd();
 }
-/*
+
 void GameActivity::matrixFiller(char *map, int w, int h)
 {
 	int i, j;
 
 	for (int i = 0; i < h; i++){
 		for (int j = 0; j < w; j++){
+			/*
 			if (j == 0 || j == w) {
 				map[i][j] = 1;
 			}
@@ -342,10 +344,11 @@ void GameActivity::matrixFiller(char *map, int w, int h)
 			else {
 				map[i][j] = 0;
 			}
+			*/
 		}
 	}
 }
-*/
+
 
 void GameActivity::drawSquare(double posX, double posY, GLuint mapId) {
 	glPushMatrix();
@@ -369,28 +372,28 @@ void GameActivity::drawSquare(double posX, double posY, GLuint mapId) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-
 	glBegin(GL_TRIANGLES);
-	glColor3f(1.0f, 1.0f, 1.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
 
-	glTexCoord2f(0.0, 0);
-	glVertex2f(-4, -4);//bottom left
+		glTexCoord2f(0.0, 0);
+		glVertex2f(-4, -4);//bottom left
 
-	glTexCoord2f(1.0, 0);
-	glVertex2f(4, -4);//bottom right
+		glTexCoord2f(1.0, 0);
+		glVertex2f(4, -4);//bottom right
 
-	glTexCoord2f(0.0, 1.0);
-	glVertex2f(-4, 4);//top left
+		glTexCoord2f(0.0, 1.0);
+		glVertex2f(-4, 4);//top left
 
-	glTexCoord2f(1.0, 0);
-	glVertex2f(4, -4);//bottom right
+		glTexCoord2f(1.0, 0);
+		glVertex2f(4, -4);//bottom right
 
-	glTexCoord2f(1.0, 1.0);
-	glVertex2f(4, 4);//top right
+		glTexCoord2f(1.0, 1.0);
+		glVertex2f(4, 4);//top right
 
-	glTexCoord2f(0.0, 1.0);
-	glVertex2f(-4, 4);//top left
+		glTexCoord2f(0.0, 1.0);
+		glVertex2f(-4, 4);//top left
 	glEnd();
+
 	glPopMatrix();
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);

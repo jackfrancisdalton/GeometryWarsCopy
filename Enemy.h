@@ -15,20 +15,25 @@ protected:
 	int refreshWait, refreshIndex;
 	int frameCounter;
 	double speed;
+	double defaultSpeed;
 	polygon enemyPoly, enemyPolyN;
-	double enemySize = 2;
+	double enemySize = 1;
 	int id;
-	bool collision_flag;;
+	bool blackHoleCollsion;
 
 public:
 	Enemy();
-	virtual void setCollisionFlag(bool val);
 	virtual void setSpeed(double speed);
 	virtual double getEnemyRot();
 	virtual double getEnemyX();
 	virtual double getEnemyY();
+	virtual double getDefaultSpeed();
+	virtual double getSpeed();
 	virtual polygon getPolygonN();
-	virtual void initialise() = 0;											// Called on application start up
+	virtual void initialise() = 0;		
+	virtual void BlackHoleCollisionOn() = 0;
+	virtual void BlackHoleCollisionOff() = 0;
+	// Called on application start up
 	virtual void shutdown();											// Called on application shut down
 	virtual void onSwitchIn();											// Activity switch in; called when the activity changes and this one switches in
 	virtual void update(double deltaT, double prevDeltaT, double playerX, double playerY) = 0;
