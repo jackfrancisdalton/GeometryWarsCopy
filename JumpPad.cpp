@@ -14,11 +14,9 @@
 
 JumpPad::JumpPad() : Object()
 {
-	posX = rand() % 30 + 10;
-	posY = rand() % 30 + 10;
 	objectPoly = polygon(4);
 	objectPolyN = polygon(4);
-	size = 6;
+	size = 4;
 	rot = 1;
 }
 
@@ -28,6 +26,9 @@ void JumpPad::initialise()
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
+	posX = (rand() % 10 - 5) * 10;
+	posY = (rand() % 10 - 5) * 10;
 
 	objectPolyN.vert[0].x = objectPoly.vert[0].x = -size;
 	objectPolyN.vert[0].y = objectPoly.vert[0].y = -size;
@@ -41,13 +42,6 @@ void JumpPad::initialise()
 
 void JumpPad::update(double deltaT, double prevDeltaT)
 {
-	if (rot < 360) {
-		rot += 30 * deltaT;
-	}
-	else {
-		rot = 0;
-	}
-
 	setTraMat(mb1, posX, posY, 0.0);
 	setRotMat(mb2, M_PI*rot / 180.0, 2);
 	MultMat(mb1, mb2, mb);
@@ -59,7 +53,7 @@ void JumpPad::render()
 	glPushMatrix();
 
 	glTranslated(posX, posY, 1.0);
-	glRotated(rot, 0.0, 0.0, 1.0);
+	glRotated(1.0, 0.0, 0.0, 1.0);
 
 	glBindTexture(GL_TEXTURE_2D, objectTextureId);
 	glEnable(GL_TEXTURE_2D);

@@ -4,6 +4,10 @@
 class EnemyType3 : public Enemy
 {
 
+private:
+	float enemySize = 2;
+	float mb[16], mb1[16], mb2[16];
+
 public:
 	EnemyType3();
 	virtual void initialise();

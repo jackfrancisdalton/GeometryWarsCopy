@@ -12,7 +12,7 @@
 
 #define MAP_SIZEX 10
 #define MAP_SIZEY 10
-#define VIEW_SIZE 140.0
+#define VIEW_SIZE 100.0
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
 #define JUMP_HEIGHT 2.5
@@ -22,45 +22,59 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 #define SHIELD_GROWTH_RATE 1.0
-#define CARRY_ON_ENEMY 2.0
-#define CARRY_ON_PLAYER 0.0
+#define TIME_TO_WAIT_AFTER_DEATH 10.00
 #define CARRY_ON_JUMP 5.0
 
+
+
 char map[20][20] = {
-	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
-	{ 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3 },
+	{ 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 },
+	{ 5, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5 },
 };
 
 GameActivity::GameActivity(OpenGLApplication *app): Activity(app)	
 {
+	currentGameTime = 0.0;
+	score = 0.0;
 	camX = camY = camRot = 0.0;
 	int skinID = 0;
 	mainHUD = HUD();
 	mapWidth = 20;
 	mapHeight = 20;
 
-	for (int i = 0; i < 30; i++) {
+	for (int i = 0; i < 5; i++) {
 		EnemyType1* e = new EnemyType1();
 		enemyList.push_back(e);
 	}
+
+	for (int i = 0; i < 10; i++) {
+		EnemyType2* e = new EnemyType2();
+		enemyList.push_back(e);
+	}
+
+	for (int i = 0; i < 5; i++) {
+		EnemyType3* e = new EnemyType3();
+		enemyList.push_back(e);
+	}
+
 	for (int i = 0; i < 2; i++) {
 		JumpPad* p = new JumpPad();
 		p->initialise();
@@ -72,6 +86,19 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 		b->initialise();
 		blackHoleList.push_back(b);
 	}
+
+	for (int i = 0; i < 1; i++) {
+		ShieldPickUp* s = new ShieldPickUp();
+		s->initialise();
+		shieldPickUpList.push_back(s);
+	}
+
+	for (int i = 0; i < numberOfScoreORbs; i++) {
+		ScoreOrb* s = new ScoreOrb();
+		s->initialise();
+		scoreOrbList.push_back(s);
+	}
+	
 }
 
 void GameActivity::initialise()
@@ -79,20 +106,30 @@ void GameActivity::initialise()
 	AllocConsole();
 	freopen("CONOUT$", "w", stdout);
 
+	numberOfScoreORbs = 10;
+
 	player = PlayerShip(chosenShipID);
 	player.initialise();
 	for each (Enemy* e in enemyList) {
 		e->initialise();
 	}
 
-	//mainHUD.initialise();
-
-	vertWall = SOIL_load_OGL_texture("vert-wall.png",
+	wallRightId = SOIL_load_OGL_texture("wall-right.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
-	horzWall = SOIL_load_OGL_texture("horz-wall.png",
+	wallLeftId = SOIL_load_OGL_texture("wall-left.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
+	wallBotId = SOIL_load_OGL_texture("wall-bot.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
+	wallTopId = SOIL_load_OGL_texture("wall-top.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -132,6 +169,7 @@ void GameActivity::onReshape(int width, int height)
 
 void GameActivity::update(double deltaT, double prevDeltaT)
 {
+	currentGameTime += 1 * deltaT;
 	player.update(deltaT, prevDeltaT, inputState);
 	camRot = player.getPlayerRot();
 	camX = player.getPlayerX();
@@ -152,25 +190,21 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 		j->update(deltaT, prevDeltaT);
 	}
 
+	for each (ShieldPickUp* s in shieldPickUpList)
+	{
+		s->update(deltaT, prevDeltaT);
+	}
+
+	for each (ScoreOrb* s in scoreOrbList)
+	{
+		s->update(deltaT, prevDeltaT);
+	}
+
 	for (int i = 0; i < enemyList.size()-1; i++)
 	{
 		for (int j = i+1; j < enemyList.size(); j++)
 		{
 			if (!SAT2D(&enemyList.at(i)->getPolygonN(), &enemyList.at(j)->getPolygonN())){
-				//enemyList.at(i)->setSpeed(1);
-				//enemyList.at(j)->setSpeed(1);
-			}
-		}
-	}
-	
-	for (int i = 0; i < enemyList.size(); i++) {
-
-		if ((!SAT2D(&player.getPolygonN(), &enemyList.at(i)->getPolygonN())) && player.checkShouldColide() == false) 
-		{
-			player.setRespawnState();
-			enemyList.erase(enemyList.begin()+i);
-			if (player.getLivesCount() == 0) {
-				app->setCurrentActivity(app->endScreen);
 			}
 		}
 	}
@@ -190,13 +224,31 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 			player.setBlackHoleSlowOn();
 		}
 	}
-	
-	for (int i = 0; i < enemyList.size(); i++) 
+
+	for (int i = 0; i < shieldPickUpList.size(); i++)
+	{
+		if (!SAT2D(&player.getPolygonN(), &shieldPickUpList.at(i)->getPolygonN()) && player.getJumpState() == false)
+		{
+			player.shieldToggleOn();
+			shieldPickUpList.erase(shieldPickUpList.begin() + i);
+		}
+	}
+
+	for (int i = 0; i < scoreOrbList.size(); i++)
+	{
+		if (!SAT2D(&player.getPolygonN(), &scoreOrbList.at(i)->getPolygonN()) && player.getJumpState() == false)
+		{
+			scoreOrbList.erase(scoreOrbList.begin() + i);
+			score++;
+		}
+	}
+
+	for (int i = 0; i < enemyList.size(); i++)
 	{
 		int collideAllTest = 0;
-		for each ( BlackHole* b in blackHoleList)
+		for each (BlackHole* b in blackHoleList)
 		{
-			
+
 			if (!SAT2D(&enemyList.at(i)->getPolygonN(), &b->getPolygonN()))
 			{
 				if (enemyList.at(i)->getSpeed() > 4)
@@ -212,6 +264,50 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 			enemyList.at(i)->setSpeed(enemyList.at(i)->getDefaultSpeed());
 		}
 	}
+
+	for (int i = 0; i < enemyList.size(); i++) {
+
+		if ((!SAT2D(&player.getPolygonN(), &enemyList.at(i)->getPolygonN())) && player.checkShouldColide() == false)
+		{
+			if (player.getShieldState() == true) {
+				enemyList.at(i)->setSpeed(0);
+			}
+
+			if (player.getShieldState() == false) {
+				player.setRespawnState();
+				//enemyList.erase(enemyList.begin() + i);
+			}
+
+			if (enemyList.at(i)->getDeadState())
+			{
+				//enemyList.erase(enemyList.begin()+i);
+			}
+
+			if (player.getLivesCount() <= 0)
+			{
+				player.setDeadState(true);
+			}
+
+			if (player.getDeadState() == true)
+			{
+				if (player.getDeadStateTime() >= TIME_TO_WAIT_AFTER_DEATH)
+				{
+					app->setCurrentActivity(app->endScreen);
+				}
+				else {
+					player.setDeadStateTime(player.getDeadStateTime() + 2);
+				}
+			}
+				
+		}
+	}
+
+	if (score == numberOfScoreORbs)
+	{
+		score = (score * 10) / currentGameTime;
+		app->setCurrentActivity(app->endScreen);
+	}
+	
 }
 
 void GameActivity::render()
@@ -222,15 +318,13 @@ void GameActivity::render()
 	glRotated(-camRot,0.0, 0.0, 1);
 	glTranslated(-camX, -camY, 0.0);
 
-	renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);
+	//renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);
 	
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 20; j++) {
 			drawSquare(i, j, map[i][j]);
 		}
 	}
-	
-	
 
 	for each (BlackHole* b in blackHoleList)
 	{
@@ -242,11 +336,20 @@ void GameActivity::render()
 		j->render();
 	}
 
+	for each (ShieldPickUp* s in shieldPickUpList)
+	{
+		s->render();
+	}
+
+	for each (ScoreOrb* s in scoreOrbList)
+	{
+		s->render();
+	}
+
 	for each (Enemy* e in enemyList)
 	{
 		e->render();
 	}
-	//mainHUD.render();
 	player.render();
 	
 	glFlush();
@@ -281,12 +384,6 @@ void GameActivity::onKeyDown(int key)
 	else if (key == VK_RETURN) {
 
 		app->setCurrentActivity(app->pauseScreen);
-	}
-	else if (key == '1') {
-		player.shieldToggle();
-	}
-	else if (key == '2') {
-		player.powerBallToggle();
 	}
 	else if (key == VK_SPACE) {
 		player.boostToggleOn();
@@ -355,14 +452,20 @@ void GameActivity::drawSquare(double posX, double posY, GLuint mapId) {
 
 	glTranslated(posX * 8 - (10 * 8), posY * 8 - (10 * 8), 0.0);
 	
-	if (mapId == 3) {
-		glBindTexture(GL_TEXTURE_2D, cornerWall);
-	}
-	else if (mapId == 1){
-		glBindTexture(GL_TEXTURE_2D, vertWall);
+	if (mapId == 1){
+		glBindTexture(GL_TEXTURE_2D,  wallLeftId);
 	}
 	else if (mapId == 2){
-		glBindTexture(GL_TEXTURE_2D, horzWall);
+		glBindTexture(GL_TEXTURE_2D, wallTopId);
+	}
+	else if (mapId == 3){
+		glBindTexture(GL_TEXTURE_2D, wallRightId);
+	}
+	else if (mapId == 4){
+		glBindTexture(GL_TEXTURE_2D, wallBotId);
+	}
+	else if (mapId == 5){
+		glBindTexture(GL_TEXTURE_2D, cornerWall);
 	}
 	else {
 		glBindTexture(GL_TEXTURE_2D, spaceTextureID);

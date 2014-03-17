@@ -14,39 +14,41 @@
 
 EnemyType2::EnemyType2() : Enemy()
 {
-	posX = (rand() % 50 - 20) * 10;
-	posY = (rand() % 50 - 20) * 10;
-	rot = 0.0;
 	textureX = textureY = 0.25;
 	refreshWait = 1000;
 	refreshIndex = 1;
 	frameCounter = 0.0;
-	speed = 30;
+	speed = defaultSpeed = 5;
+	enemyPoly = polygon(4);
+	enemyPolyN = polygon(4);
+	blackHoleCollsion = false;
+	deadState = false;
 }
 
 void EnemyType2::initialise()
 {
-	enemyTextureId = SOIL_load_OGL_texture("enemy-sprite-sheet2.png",
+	enemyTextureId = SOIL_load_OGL_texture("pentagon-enemy.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
+	//srand(time(NULL));
+	posX = 75;
+	posY = (rand() % 10 - 5) * 10;
+	rot = 0.0;
+
+	enemyPolyN.vert[0].x = enemyPoly.vert[0].x = -enemySize;
+	enemyPolyN.vert[0].y = enemyPoly.vert[0].y = -enemySize;
+	enemyPolyN.vert[1].x = enemyPoly.vert[1].x = enemySize;
+	enemyPolyN.vert[1].y = enemyPoly.vert[1].y = -enemySize;
+	enemyPolyN.vert[2].x = enemyPoly.vert[2].x = enemySize;
+	enemyPolyN.vert[2].y = enemyPoly.vert[2].y = enemySize;
+	enemyPolyN.vert[3].x = enemyPoly.vert[3].x = -enemySize;
+	enemyPolyN.vert[3].y = enemyPoly.vert[3].y = enemySize;
 }
 
 void EnemyType2::update(double deltaT, double prevDeltaT, double playerX, double playerY)
 {
-
-	frameCounter += 1;
-	if (frameCounter > 100) {
-		if (textureX < 1) {
-			textureX += .25;
-			frameCounter = 0.0;
-		}
-		else {
-			textureX = 0.25;
-			frameCounter = 0.0;
-		}
-	}
-
 	double rotRads = atan2(posY - playerY, posX - playerX); //trig function for angle of zombie
 	rot = rotRads * (180.0 / M_PI); // convert to deg
 
@@ -55,6 +57,13 @@ void EnemyType2::update(double deltaT, double prevDeltaT, double playerX, double
 
 	posX -= playerDirCos * speed * deltaT;
 	posY -= playerDirSin * speed * deltaT;
+
+	setTraMat(mb1, posX, posY, 0.0);
+	setRotMat(mb2, M_PI*rot / 180.0, 2);
+	MultMat(mb1, mb2, mb);
+	for (int i = 0; i < 4; ++i){
+		MultMatPre2DPoint(mb, &enemyPoly.vert[i], &enemyPolyN.vert[i]);
+	}
 
 }
 
@@ -73,23 +82,23 @@ void EnemyType2::render()
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.0f, 1.0f, 1.0f);
 
-	glTexCoord2f(textureX - 0.25, 0);
-	glVertex2f(-1, -1);//bottom left
+	glTexCoord2f(0, 0);
+	glVertex2f(-enemySize, -enemySize);//bottom left
 
-	glTexCoord2f(textureX, 0);
-	glVertex2f(1, -1);//bottom right
+	glTexCoord2f(1, 0);
+	glVertex2f(enemySize, -enemySize);//bottom right
 
-	glTexCoord2f(textureX - 0.25, 1.0);
-	glVertex2f(-1, 1);//top left
+	glTexCoord2f(0, 1.0);
+	glVertex2f(-enemySize, enemySize);//top left
 
-	glTexCoord2f(textureX, 0);
-	glVertex2f(1, -1);//bottom right
+	glTexCoord2f(1, 0);
+	glVertex2f(enemySize, -enemySize);//bottom right
 
-	glTexCoord2f(textureX, 1.0);
-	glVertex2f(1, 1);//top right
+	glTexCoord2f(1, 1.0);
+	glVertex2f(enemySize, enemySize);//top right
 
-	glTexCoord2f(textureX - 0.25, 1.0);
-	glVertex2f(-1, 1);//top left
+	glTexCoord2f(0, 1.0);
+	glVertex2f(-enemySize, enemySize);//top left
 	glEnd();
 	glPopMatrix();
 	glDisable(GL_BLEND);

@@ -14,8 +14,6 @@
 
 BlackHole::BlackHole() : Object()
 {
-	posX = rand() % 30  + 10;
-	posY = rand() % 30 + 10;
 	objectPoly = polygon(4);
 	objectPolyN = polygon(4);
 	size = 6;
@@ -28,6 +26,9 @@ void BlackHole::initialise()
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
+	posX = (rand() % 10 - 5) * 10;
+	posY = (rand() % 10 - 5) * 10;
 
 	objectPolyN.vert[0].x = objectPoly.vert[0].x = -size;
 	objectPolyN.vert[0].y = objectPoly.vert[0].y = -size;

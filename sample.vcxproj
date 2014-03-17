@@ -32,6 +32,7 @@
     <ClCompile Include="PauseScreenActivity.cpp" />
     <ClCompile Include="PlayerShip.cpp" />
     <ClCompile Include="PolyObjects.cpp" />
+    <ClCompile Include="ScoreOrb.cpp" />
     <ClCompile Include="SelectScreenActivity.cpp" />
     <ClCompile Include="ShieldPickUp.cpp" />
     <ClCompile Include="SOIL.c" />
@@ -61,6 +62,7 @@
     <ClInclude Include="PauseScreenActivity.h" />
     <ClInclude Include="PlayerShip.h" />
     <ClInclude Include="PolyObjects.h" />
+    <ClInclude Include="ScoreOrb.h" />
     <ClInclude Include="SelectScreenActivity.h" />
     <ClInclude Include="ShieldPickUp.h" />
     <ClInclude Include="SOIL.h" />

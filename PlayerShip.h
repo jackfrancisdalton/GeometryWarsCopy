@@ -32,6 +32,8 @@ private:
 	//SHIELD
 	double shieldTime;
 	double shieldScale;
+	double shieldTimeLength;
+	double shieldTimeMax;
 
 	//POWER ORB
 	double powerORBRotate;
@@ -41,6 +43,8 @@ private:
 	//RESPAWN SATE
 	double respawnTimer;
 	double respawnstateOpacity;
+	bool deadState;
+	double deadStateTime;
 	
 	//VISUAL
 	int shipChoice;
@@ -57,6 +61,10 @@ private:
 	polygon playerPoly, playerPolyN;
 	float mb[16], mb1[16], mb2[16];
 	double collisionWait;
+	double wallMaxX = 67;
+	double wallMaxY = 67;
+	double wallMinX = -75;
+	double wallMinY = -75;
 
 
 public:
@@ -66,20 +74,26 @@ public:
 	virtual void powerBallToggle();
 	virtual void boostToggleOn();
 	virtual void boostToggleOff();
-	virtual void shieldToggle();
+	virtual void shieldToggleOn();
 
 	virtual void setRespawnState();
 	virtual void setPlayerJumpOn();
 	virtual void setBlackHoleSlowOn();
-
+	virtual void setDeadState(bool val);
+	virtual void setDeadStateTime(double val);
 	virtual bool checkShouldColide();
 
+	virtual bool getDeadState();
+	virtual double getDeadStateTime();
 	virtual double getPlayerRot();
 	virtual double getPlayerX();
 	virtual double getPlayerY();
+	virtual bool getShieldState();
+	virtual bool getJumpState();
 	virtual polygon getPolygonN();
 	virtual int getLivesCount();
 	virtual double getCollisionWait();
+	virtual void wallCollisionHandeling();
 
 	virtual void incrementCollisionWait();
 	virtual void initialise();											

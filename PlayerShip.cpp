@@ -28,6 +28,7 @@ PlayerShip::PlayerShip()
 
 PlayerShip::PlayerShip(int shipID)
 {
+	deadState = false;
 	playerX = 0.0;
 	playerY = 0.0;
 	rotateZ = 0.0;
@@ -63,6 +64,8 @@ PlayerShip::PlayerShip(int shipID)
 	boosterR = 1.0;
 	boosterG = 1.0;
 	boosterB = 1.0;
+	shieldTimeLength = 0.0;
+	shieldTimeMax = 10.0;
 
 	if (shipChoice == 1) {
 		rotationSpeed = 500;
@@ -293,6 +296,20 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 	}
 
 	//*****************************************************POWER UPS
+
+	if (shieldOn == true)
+	{
+		if (shieldTimeLength < shieldTimeMax)
+		{
+			shieldTimeLength += 0.01;
+		}
+		else {
+			shieldOn = false;
+			shieldTimeLength = 0;
+		}	
+	}
+
+
 	if(powerORBOn == true) {
 		powerORBRotate += (ROTATION_SPIKE_BALL_SPEED * deltaT);
 		if (powerORBSize < powerORBMaxSize) {
@@ -339,6 +356,21 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 			respawnstateOpacity = 0.4;
 		}
 	}
+
+	if (playerX > wallMaxX) {
+		playerX = wallMaxX;
+	}
+	else if (playerX < wallMinX) {
+		playerX = wallMinX;
+	}
+
+	if (playerY > wallMaxY) {
+		playerY = wallMaxY;
+	}
+	else if (playerY < wallMinY) {
+		playerY = wallMinY;
+	}
+
 
 	//****************************************MATRIX COLLISION
 	setTraMat(mb1, playerX, playerY, 0.0);
@@ -578,19 +610,21 @@ bool PlayerShip::checkShouldColide() {
 	return false;
 }
 
+bool PlayerShip::getShieldState() {
+	return shieldOn;
+}
+
+bool PlayerShip::getJumpState() {
+	return jump;
+}
+
 void PlayerShip::incrementCollisionWait() {
 	collisionWait++;
 }
 
-void PlayerShip::shieldToggle() {
-	if (!shieldOn) {
-		shieldScale = 0.0;
-		shieldTime = 0.0;
-		shieldOn = true;
-	}
-	else {
-		shieldOn = false;
-	}
+void PlayerShip::shieldToggleOn() {
+	shieldOn = true;
+	shieldTimeLength = 0.0;
 }
 
 void PlayerShip::powerBallToggle() {
@@ -607,6 +641,11 @@ void PlayerShip::setRespawnState() {
 
 int PlayerShip::getLivesCount() {
 	return lives;
+}
+
+void PlayerShip::wallCollisionHandeling()
+{
+
 }
 
 void PlayerShip::boostToggleOn()
@@ -628,4 +667,23 @@ void PlayerShip::boostToggleOff()
 polygon PlayerShip::getPolygonN()
 {
 	return playerPolyN;
+}
+
+bool PlayerShip::getDeadState()
+{
+	return deadState;
+}
+
+void PlayerShip::setDeadState(bool val){
+	deadState = val;
+}
+
+
+double PlayerShip::getDeadStateTime()
+{
+	return deadStateTime;
+}
+
+void PlayerShip::setDeadStateTime(double val){
+	deadStateTime = val;
 }

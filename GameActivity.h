@@ -10,6 +10,8 @@
 #include "EnemyType2.h"
 #include "EnemyType3.h"
 #include "PolyObjects.h"
+#include "ShieldPickUp.h"
+#include "ScoreOrb.h"
 #include "Matrix.h"
 #include <vector>
 
@@ -19,14 +21,19 @@ class GameActivity : public Activity
 private:
 	double camX, camY, camRot;
 	double aspect;
-	//BlackHole blackHole;
-	//JumpPad pad;
+	double score;
+	double currentGameTime;
+	double numberOfScoreORbs = 10;
+	std::vector<ScoreOrb*> scoreOrbList;
 	std::vector<JumpPad*> jumpPadList;
 	std::vector<BlackHole*> blackHoleList;
+	std::vector<ShieldPickUp*> shieldPickUpList;
 	PlayerShip player;
 	std::vector<Enemy*> enemyList;
 	HUD mainHUD;
-	GLuint healthIconTextureID, vertWall, playerTextureID, horzWall, spikeBallTextureID, shieldTextureID, shieldHitTextureID, spaceTextureID, cornerWall;
+	GLuint healthIconTextureID, playerTextureID, spikeBallTextureID, shieldTextureID, shieldHitTextureID, spaceTextureID, cornerWall;
+	GLuint wallRightId, wallLeftId, wallBotId, wallTopId;
+	
 	GLuint texture[2];
 	int mapWidth;
 	int mapHeight;

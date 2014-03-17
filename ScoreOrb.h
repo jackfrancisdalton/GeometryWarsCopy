@@ -1,13 +1,13 @@
 #include <gl/gl.h>			
 #include "Collectable.h"
 
-class ShieldPickUp : public Collectable
+class ScoreOrb : public Collectable
 {
 private:
 	float mb[16], mb1[16], mb2[16];
 
 public:
-	ShieldPickUp();
+	ScoreOrb();
 	virtual void initialise();
 	virtual void update(double deltaT, double prevDeltaT);
 	virtual void render();

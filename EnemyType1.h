@@ -12,6 +12,4 @@ public:
 	virtual void initialise();											
 	virtual void update(double deltaT, double prevDeltaT, double playerX, double playerY);
 	virtual void render();		
-	virtual void BlackHoleCollisionOn();
-	virtual void BlackHoleCollisionOff();
 };

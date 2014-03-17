@@ -4,45 +4,43 @@
 #include <math.h>
 #include "SOIL.h"
 #include "OpenGLApplication.h"		
-#include "ShieldPickUp.h"
+#include "ScoreOrb.h"
 #include <random>
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
-int temp = 1;
 
-ShieldPickUp::ShieldPickUp() : Collectable()
+ScoreOrb::ScoreOrb() : Collectable()
 {
-	posX = -20;
-	posY = 20;
 	objectPoly = polygon(4);
 	objectPolyN = polygon(4);
 	size = 4;
-	height = 1;
-	width = 1;
 	rot = 1;
 }
 
-void ShieldPickUp::initialise()
+void ScoreOrb::initialise()
 {
-	collectableTextureId = SOIL_load_OGL_texture("shield-pickup.png",
+	collectableTextureId = SOIL_load_OGL_texture("blue-orb.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
-	objectPolyN.vert[0].x = objectPoly.vert[0].x = -temp;
-	objectPolyN.vert[0].y = objectPoly.vert[0].y = -temp;
-	objectPolyN.vert[1].x = objectPoly.vert[1].x = temp;
-	objectPolyN.vert[1].y = objectPoly.vert[1].y = -temp;
-	objectPolyN.vert[2].x = objectPoly.vert[2].x = temp;
-	objectPolyN.vert[2].y = objectPoly.vert[2].y = temp;
-	objectPolyN.vert[3].x = objectPoly.vert[3].x = -temp;
-	objectPolyN.vert[3].y = objectPoly.vert[3].y = temp;
+	posX = (rand() % 10 - 5) * 10;
+	posY = (rand() % 10 - 5) * 10;
+
+	objectPolyN.vert[0].x = objectPoly.vert[0].x = -size/2;
+	objectPolyN.vert[0].y = objectPoly.vert[0].y = -size/2;
+	objectPolyN.vert[1].x = objectPoly.vert[1].x = size/2;
+	objectPolyN.vert[1].y = objectPoly.vert[1].y = -size/2;
+	objectPolyN.vert[2].x = objectPoly.vert[2].x = size/2;
+	objectPolyN.vert[2].y = objectPoly.vert[2].y = size/2;
+	objectPolyN.vert[3].x = objectPoly.vert[3].x = -size/2;
+	objectPolyN.vert[3].y = objectPoly.vert[3].y = size/2;
 }
 
-void ShieldPickUp::update(double deltaT, double prevDeltaT)
+void ScoreOrb::update(double deltaT, double prevDeltaT)
 {
 	if (rot < 360) {
 		rot += 30 * deltaT;
@@ -57,7 +55,7 @@ void ShieldPickUp::update(double deltaT, double prevDeltaT)
 	for (int i = 0; i<4; ++i)MultMatPre2DPoint(mb, &objectPoly.vert[i], &objectPolyN.vert[i]);
 }
 
-void ShieldPickUp::render()
+void ScoreOrb::render()
 {
 	glPushMatrix();
 

@@ -19,10 +19,11 @@ EnemyType1::EnemyType1() : Enemy()
 	refreshWait = 1000;
 	refreshIndex = 1;
 	frameCounter = 0.0;
-	speed = defaultSpeed = 10;
+	speed = defaultSpeed = 6;
 	enemyPoly = polygon(4);
 	enemyPolyN = polygon(4);
 	blackHoleCollsion = false;
+	deadState = false;
 }
 /* use for testing enemies
 EnemyType1::EnemyType1(int idVal) : Enemy()
@@ -45,8 +46,8 @@ void EnemyType1::initialise()
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
 	//srand(time(NULL));
-	posX = (rand() % 10 - 5) * 20;
-	posY = (rand() % 10 - 5) * 20;
+	posX = -75;
+	posY = (rand() % 10 - 5) * 10;
 	rot = 0.0;
 
 	enemyPolyN.vert[0].x = enemyPoly.vert[0].x = -enemySize;
@@ -61,18 +62,6 @@ void EnemyType1::initialise()
 
 void EnemyType1::update(double deltaT, double prevDeltaT, double playerX, double playerY)
 {
-	frameCounter += 1;
-	if (frameCounter > 100) {
-		if (textureX < 1) {
-			textureX += .25;
-			frameCounter = 0.0;
-		}
-		else {
-			textureX = 0.25;
-			frameCounter = 0.0;
-		}
-	}
-
 	double rotRads = atan2(posY - playerY, posX - playerX); //trig function for angle of zombie
 	rot = rotRads * (180.0 / M_PI); // convert to deg
 
@@ -102,7 +91,6 @@ void EnemyType1::render()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor3f(1.0f, 1.0f, 1.0f);
 
-
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0, 0.0); glVertex2f(-enemySize, -enemySize);
 		glTexCoord2f(0.0, 1.0); glVertex2f(enemySize, -enemySize);
@@ -115,12 +103,3 @@ void EnemyType1::render()
 	glPopMatrix();
 }
 
-void EnemyType1::BlackHoleCollisionOn()
-{
-	blackHoleCollsion = true;
-}
-
-void EnemyType1::BlackHoleCollisionOff()
-{
-	blackHoleCollsion = false;
-}

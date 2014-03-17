@@ -45,6 +45,16 @@ double Enemy::getDefaultSpeed()
 	return defaultSpeed;
 }
 
+bool Enemy::getDeadState()
+{
+	return deadState;
+}
+
+void Enemy::setDeadState()
+{
+	deadState = true;
+}
+
 double Enemy::getSpeed()
 {
 	return speed;
@@ -58,4 +68,15 @@ void Enemy::shutdown()
 void Enemy::onSwitchIn()
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
+}
+
+
+void Enemy::BlackHoleCollisionOn()
+{
+	blackHoleCollsion = true;
+}
+
+void Enemy::BlackHoleCollisionOff()
+{
+	blackHoleCollsion = false;
 }

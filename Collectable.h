@@ -1,5 +1,5 @@
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef COLLECTABLE_H
+#define COLLECTABLE_H
 
 #include <gl/gl.h>			
 #include "PolyObjects.h"
@@ -11,6 +11,8 @@ protected:
 	GLuint collectableTextureId;
 	double posX, posY, rot;
 	double size;
+	double height;
+	double width;
 	polygon objectPoly, objectPolyN;
 
 public:
