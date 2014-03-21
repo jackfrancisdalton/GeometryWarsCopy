@@ -29,6 +29,7 @@ PlayerShip::PlayerShip()
 PlayerShip::PlayerShip(int shipID)
 {
 	deadState = false;
+	deadStateTime = 0.0;
 	playerX = 0.0;
 	playerY = 0.0;
 	rotateZ = 0.0;
@@ -83,7 +84,7 @@ PlayerShip::PlayerShip(int shipID)
 void PlayerShip::initialise()
 {
 	if (shipChoice == 1) {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin3.png",
+		playerTextureID = SOIL_load_OGL_texture("ship-sprite-sheet2.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -95,7 +96,7 @@ void PlayerShip::initialise()
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 	}
 	else {
-		playerTextureID = SOIL_load_OGL_texture("playerSkin2.png",
+		playerTextureID = SOIL_load_OGL_texture("ship-sprite-sheet3.png",
 			SOIL_LOAD_AUTO,
 			SOIL_CREATE_NEW_ID,
 			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -144,7 +145,8 @@ void PlayerShip::onSwitchIn()
 
 void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState)
 {
-	double playerDirSin = sin(DEG_2_RAD(-rotateZ)), playerDirCos = cos(DEG_2_RAD(-rotateZ));
+	double playerDirSin = sin(DEG_2_RAD(-rotateZ));
+	double playerDirCos = cos(DEG_2_RAD(-rotateZ));
 
 	if(inputState->isKeyPressed('W'))
 	{
@@ -230,11 +232,11 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 
 	if(inputState->isKeyPressed('D'))
 	{
-		booster1X = 0.9;
-		booster2X = -0.2;
+		booster1X = 0.8;
+		booster2X = -0.5;
 		rotateZ -= rotationSpeed * deltaT;
 		spriteX = 1;
-		booster1Y = -2.3;
+		booster1Y = -2.4;
 
 	}
 	 else if(inputState->isKeyPressed('A'))
@@ -242,8 +244,8 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 		rotateZ += rotationSpeed * deltaT;
 		spriteX = 0.666666;
 		booster1X = -0.9;
-		booster2X = 0.2;
-		booster1Y = -2.3;
+		booster2X = 0.3;
+		booster1Y = -2.4;
 	}
 	 else {
 		 booster1X = -0.7;

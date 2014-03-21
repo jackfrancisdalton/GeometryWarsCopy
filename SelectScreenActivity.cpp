@@ -83,23 +83,23 @@ void SelectScreenActivity::render()
 	// Use two triangles to make a square, with texture co-ordinates for each vertex
 	glBegin(GL_TRIANGLES);
 		glTexCoord2f(0, 0);
-		glVertex2f(-1, -1);
+		glVertex2f(-1.2, -0.9);
 
 		glTexCoord2f(1, 0);
-		glVertex2f(1, -1);
+		glVertex2f(1.2, -0.9);
 
 		glTexCoord2f(0, 1);
-		glVertex2f(-1, 1);
+		glVertex2f(-1.2, 0.9);
 
 
 		glTexCoord2f(1, 0);
-		glVertex2f(1, -1);
+		glVertex2f(1.2, -0.9);
 
 		glTexCoord2f(1, 1);
-		glVertex2f(1, 1);
+		glVertex2f(1.2, 0.9);
 
 		glTexCoord2f(0, 1);
-		glVertex2f(-1, 1);
+		glVertex2f(-1.2, 0.9);
 	glEnd();
 
 	// Disable 2D texturing

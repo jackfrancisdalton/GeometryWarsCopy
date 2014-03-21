@@ -12,7 +12,7 @@
 
 #define MAP_SIZEX 10
 #define MAP_SIZEY 10
-#define VIEW_SIZE 100.0
+#define VIEW_SIZE 80.0
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
 #define JUMP_HEIGHT 2.5
@@ -60,7 +60,7 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 	mapWidth = 20;
 	mapHeight = 20;
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 10; i++) {
 		EnemyType1* e = new EnemyType1();
 		enemyList.push_back(e);
 	}
@@ -70,29 +70,29 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 		enemyList.push_back(e);
 	}
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 10; i++) {
 		EnemyType3* e = new EnemyType3();
 		enemyList.push_back(e);
 	}
-
-	for (int i = 0; i < 2; i++) {
+	
+	for (int i = 0; i < 10; i++) {
 		JumpPad* p = new JumpPad();
 		p->initialise();
 		jumpPadList.push_back(p);
 	}
-
-	for (int i = 0; i < 5; i++) {
+	
+	for (int i = 0; i < 10; i++) {
 		BlackHole* b = new BlackHole();
 		b->initialise();
 		blackHoleList.push_back(b);
 	}
-
+	
 	for (int i = 0; i < 1; i++) {
 		ShieldPickUp* s = new ShieldPickUp();
 		s->initialise();
 		shieldPickUpList.push_back(s);
 	}
-
+	
 	for (int i = 0; i < numberOfScoreORbs; i++) {
 		ScoreOrb* s = new ScoreOrb();
 		s->initialise();
@@ -282,23 +282,23 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 			{
 				//enemyList.erase(enemyList.begin()+i);
 			}
+		}
+	}
 
-			if (player.getLivesCount() <= 0)
-			{
-				player.setDeadState(true);
-			}
+	if (player.getLivesCount() <= 0)
+	{
+		player.setDeadState(true);
+	}
 
-			if (player.getDeadState() == true)
-			{
-				if (player.getDeadStateTime() >= TIME_TO_WAIT_AFTER_DEATH)
-				{
-					app->setCurrentActivity(app->endScreen);
-				}
-				else {
-					player.setDeadStateTime(player.getDeadStateTime() + 2);
-				}
-			}
-				
+	if (player.getDeadState() == true)
+	{
+		if (player.getDeadStateTime() > TIME_TO_WAIT_AFTER_DEATH)
+		{
+			app->setCurrentActivity(app->endScreen);
+		}
+		else {
+			std::cout << player.getDeadStateTime() << std::endl;
+			player.setDeadStateTime(player.getDeadStateTime() + 0.1);
 		}
 	}
 
