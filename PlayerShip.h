@@ -6,7 +6,7 @@ class PlayerShip
 {
 private:
 	GLuint playerTextureID, rocketBooster, spikeBallTextureID, shieldTextureID, shieldHitTextureID;
-	int lives;
+	int lives, health;
 
 	double playerX;
 	double playerY;
@@ -22,6 +22,7 @@ private:
 	bool boostOn;
 	bool powerORBOn;
 	bool shieldOn;
+	bool damageState;
 	bool respawnState;
 
 	//JUMP
@@ -77,6 +78,7 @@ public:
 	virtual void shieldToggleOn();
 
 	virtual void setRespawnState();
+	virtual void setDamageState();
 	virtual void setPlayerJumpOn();
 	virtual void setBlackHoleSlowOn();
 	virtual void setDeadState(bool val);
@@ -84,6 +86,7 @@ public:
 	virtual bool checkShouldColide();
 
 	virtual bool getDeadState();
+	virtual int getHealthCount();
 	virtual double getDeadStateTime();
 	virtual double getPlayerRot();
 	virtual double getPlayerX();

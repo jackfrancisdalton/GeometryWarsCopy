@@ -8,7 +8,6 @@
 #include <string>		
 #include <sstream>
 
-
 #define VIEW_SIZE 50.0
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
@@ -21,42 +20,45 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 
-
-HUD::HUD()
+HUD::HUD(double x, double y)
 {
-	font = CreateFont(-40,							// Height Of Font
-		0,								// Width Of Font
-		0,								// Angle Of Escapement
-		0,								// Orientation Angle
-		FW_NORMAL,						// Font Weight
-		FALSE,							// Italic
-		FALSE,							// Underline
-		FALSE,							// Strikeout
-		ANSI_CHARSET,					// Character Set Identifier
-		OUT_TT_PRECIS,					// Output Precision
-		CLIP_DEFAULT_PRECIS,			// Clipping Precision
-		ANTIALIASED_QUALITY,			// Output Quality
-		FF_DONTCARE | DEFAULT_PITCH,		// Family And Pitch
-		"Arial");					// Font Name
-
-	base = glGenLists(96);
-
+	posX = x;
+	posY = y;
+	texY1 = 1.0;
+	texY2 = 0.8;
 }
 
+HUD::HUD(){}
 
 void HUD::initialise()
 {
-	HDC			hDC = NULL;		// Private GDI Device Context
-	healthIconTextureID = SOIL_load_OGL_texture("health_icon.png",
+	healthIconTextureID = SOIL_load_OGL_texture("health_bar_sprite.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-	wglUseFontBitmaps(hDC, 32, 96, base);
 }
 
 void HUD::setPosition(double x, double y) {
 	posX = x;
 	posY = y;
+}
+
+void HUD::increaseHealthTexture()
+{
+	if (texY1 < 0.9)
+	{
+		texY1 = texY1 + 0.2;
+		texY2 = texY2 + 0.2;
+	}
+}
+
+void HUD::decreaseHealthTexture()
+{
+	if (texY2 > 0.1)
+	{
+		texY1 = texY1 - 0.2;
+		texY2 = texY2 - 0.2;
+	}
 }
 
 void HUD::glutBitmapCharacter(void *font, int character) {
@@ -70,6 +72,7 @@ void HUD::shutdown()
 
 void HUD::update(double deltaT, double prevDeltaT, InputState *inputState)
 {
+
 }
 
 void HUD::render()
@@ -77,7 +80,8 @@ void HUD::render()
 	//glPrint("Bitmap Text fififi A Number: ");
 	//*******************************HUD HEART 1
 	glPushMatrix();
-	glTranslated(posX-6, posY+3, 1.0);
+	glLoadIdentity();
+	glTranslated(posX - 16.0, posY + 5.0, 1.0);
 	glBindTexture(GL_TEXTURE_2D, healthIconTextureID);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
@@ -86,91 +90,23 @@ void HUD::render()
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.0f, 1.0f, 1.0f);
 
-	glTexCoord2f(0, 0);
-	glVertex2f(-1, -1);
+	glTexCoord2f(0, texY1);
+	glVertex2f(-14, -4);
 
-	glTexCoord2f(1, 0);
-	glVertex2f(1, -1);
+	glTexCoord2f(1, texY1);
+	glVertex2f(14, -4);
 
-	glTexCoord2f(0, 1);
-	glVertex2f(-1, 1);
+	glTexCoord2f(0, texY2);
+	glVertex2f(-14, 4);
 
-	glTexCoord2f(1, 0);
-	glVertex2f(1, -1);
+	glTexCoord2f(1, texY1);
+	glVertex2f(14, -4);
 
-	glTexCoord2f(1, 1);
-	glVertex2f(1, 1);
+	glTexCoord2f(1, texY2);
+	glVertex2f(14, 4);
 
-	glTexCoord2f(0, 1);
-	glVertex2f(-1, 1);
-	glEnd();
-
-	glDisable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
-	glPopMatrix();
-
-	//*******************************HUD HEART 2
-	glPushMatrix();
-	glTranslated(posX - 4, posY + 3, 1.0);
-	glBindTexture(GL_TEXTURE_2D, healthIconTextureID);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glBegin(GL_TRIANGLES);
-	glColor3f(1.0f, 1.0f, 1.0f);
-
-	glTexCoord2f(0, 0);
-	glVertex2f(-1, -1);
-
-	glTexCoord2f(1, 0);
-	glVertex2f(1, -1);
-
-	glTexCoord2f(0, 1);
-	glVertex2f(-1, 1);
-
-	glTexCoord2f(1, 0);
-	glVertex2f(1, -1);
-
-	glTexCoord2f(1, 1);
-	glVertex2f(1, 1);
-
-	glTexCoord2f(0, 1);
-	glVertex2f(-1, 1);
-	glEnd();
-
-	glDisable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
-	glPopMatrix();
-
-	//*******************************HUD HEART 3
-	glPushMatrix();
-
-	glTranslated(posX - 2, posY + 3, 1.0);
-	glBindTexture(GL_TEXTURE_2D, healthIconTextureID);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBegin(GL_TRIANGLES);
-	glColor3f(1.0f, 1.0f, 1.0f);
-
-	glTexCoord2f(0, 0);
-	glVertex2f(-1, -1);
-
-	glTexCoord2f(1, 0);
-	glVertex2f(1, -1);
-
-	glTexCoord2f(0, 1);
-	glVertex2f(-1, 1);
-
-	glTexCoord2f(1, 0);
-	glVertex2f(1, -1);
-
-	glTexCoord2f(1, 1);
-	glVertex2f(1, 1);
-
-	glTexCoord2f(0, 1);
-	glVertex2f(-1, 1);
+	glTexCoord2f(0, texY2);
+	glVertex2f(-14, 4);
 	glEnd();
 
 	glDisable(GL_BLEND);
@@ -179,7 +115,7 @@ void HUD::render()
 }
 
 
-void HUD::glPrint(std::string str)					// Custom GL "Print" Routine
+void HUD::glPrint(std::string str)						// Custom GL "Print" Routine
 {
 	std::stringstream stream;
 	stream << str << " " << 0;

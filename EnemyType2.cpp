@@ -64,7 +64,6 @@ void EnemyType2::update(double deltaT, double prevDeltaT, double playerX, double
 	for (int i = 0; i < 4; ++i){
 		MultMatPre2DPoint(mb, &enemyPoly.vert[i], &enemyPolyN.vert[i]);
 	}
-
 }
 
 void EnemyType2::render()

@@ -9,6 +9,7 @@
 #include "Collision.h"
 #include <iostream>
 #include <vector>
+#include <mmsystem.h>
 
 #define MAP_SIZEX 10
 #define MAP_SIZEY 10
@@ -24,8 +25,6 @@
 #define SHIELD_GROWTH_RATE 1.0
 #define TIME_TO_WAIT_AFTER_DEATH 10.00
 #define CARRY_ON_JUMP 5.0
-
-
 
 char map[20][20] = {
 	{ 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5 },
@@ -50,16 +49,19 @@ char map[20][20] = {
 	{ 5, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5 },
 };
 
+string scorestring = "";
+
 GameActivity::GameActivity(OpenGLApplication *app): Activity(app)	
 {
 	currentGameTime = 0.0;
 	score = 0.0;
 	camX = camY = camRot = 0.0;
 	int skinID = 0;
-	mainHUD = HUD();
 	mapWidth = 20;
 	mapHeight = 20;
-
+	OrbsPickedUp = 0;
+	numberOfScoreOrbs = 3;
+	
 	for (int i = 0; i < 10; i++) {
 		EnemyType1* e = new EnemyType1();
 		enemyList.push_back(e);
@@ -75,13 +77,13 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 		enemyList.push_back(e);
 	}
 	
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 1; i++) {
 		JumpPad* p = new JumpPad();
 		p->initialise();
 		jumpPadList.push_back(p);
 	}
 	
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 1; i++) {
 		BlackHole* b = new BlackHole();
 		b->initialise();
 		blackHoleList.push_back(b);
@@ -93,12 +95,16 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 		shieldPickUpList.push_back(s);
 	}
 	
-	for (int i = 0; i < numberOfScoreORbs; i++) {
+	for (int i = 0; i < numberOfScoreOrbs; i++) {
 		ScoreOrb* s = new ScoreOrb();
 		s->initialise();
 		scoreOrbList.push_back(s);
 	}
 	
+	for each (Enemy* e in enemyList) {
+		e->initialise();
+	}
+	mainHUD = HUD(VIEW_SIZE*0.5*aspect, -VIEW_SIZE*0.5);
 }
 
 void GameActivity::initialise()
@@ -106,13 +112,12 @@ void GameActivity::initialise()
 	AllocConsole();
 	freopen("CONOUT$", "w", stdout);
 
-	numberOfScoreORbs = 10;
-
+	glGenTextures(1, &TESTFONT);
+	myfont.Create("Arial.glf", TESTFONT);
+	
 	player = PlayerShip(chosenShipID);
 	player.initialise();
-	for each (Enemy* e in enemyList) {
-		e->initialise();
-	}
+	mainHUD.initialise();
 
 	wallRightId = SOIL_load_OGL_texture("wall-right.png",
 		SOIL_LOAD_AUTO,
@@ -143,6 +148,10 @@ void GameActivity::initialise()
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
+	levelStart = true;
+	levelWon = false;
+	levelLost = false;
 }
 
 void GameActivity::shutdown()
@@ -169,143 +178,160 @@ void GameActivity::onReshape(int width, int height)
 
 void GameActivity::update(double deltaT, double prevDeltaT)
 {
-	currentGameTime += 1 * deltaT;
-	player.update(deltaT, prevDeltaT, inputState);
-	camRot = player.getPlayerRot();
-	camX = player.getPlayerX();
-	camY = player.getPlayerY();
 
-	for each (Enemy* e in enemyList)
+	if (levelStart == true)
 	{
-		e->update(deltaT, prevDeltaT, camX, camY);
+
 	}
-
-	for each (BlackHole* b in blackHoleList)
+	else if (levelLost == true)
 	{
-		b->update(deltaT, prevDeltaT);
+		
 	}
-
-	for each (JumpPad* j in jumpPadList)
+	else if (levelWon == true)
 	{
-		j->update(deltaT, prevDeltaT);
+		
 	}
-
-	for each (ShieldPickUp* s in shieldPickUpList)
+	else
 	{
-		s->update(deltaT, prevDeltaT);
-	}
+		mainHUD.setPosition(VIEW_SIZE*0.5*aspect, -VIEW_SIZE*0.5);
+		currentGameTime += 1 * deltaT;
+		player.update(deltaT, prevDeltaT, inputState);
+		camRot = player.getPlayerRot();
+		camX = player.getPlayerX();
+		camY = player.getPlayerY();
 
-	for each (ScoreOrb* s in scoreOrbList)
-	{
-		s->update(deltaT, prevDeltaT);
-	}
-
-	for (int i = 0; i < enemyList.size()-1; i++)
-	{
-		for (int j = i+1; j < enemyList.size(); j++)
+		for each (Enemy* e in enemyList)
 		{
-			if (!SAT2D(&enemyList.at(i)->getPolygonN(), &enemyList.at(j)->getPolygonN())){
-			}
+			e->update(deltaT, prevDeltaT, camX, camY);
 		}
-	}
-	
-	for each(JumpPad* p in jumpPadList) 
-	{
-		if (!SAT2D(&player.getPolygonN(), &p->getPolygonN()))
-		{
-			player.setPlayerJumpOn();
-		}
-	}
-	
-	for each(BlackHole* b in blackHoleList)
-	{
-		if (!SAT2D(&player.getPolygonN(), &b->getPolygonN()) && player.checkShouldColide() == false)
-		{
-			player.setBlackHoleSlowOn();
-		}
-	}
 
-	for (int i = 0; i < shieldPickUpList.size(); i++)
-	{
-		if (!SAT2D(&player.getPolygonN(), &shieldPickUpList.at(i)->getPolygonN()) && player.getJumpState() == false)
-		{
-			player.shieldToggleOn();
-			shieldPickUpList.erase(shieldPickUpList.begin() + i);
-		}
-	}
-
-	for (int i = 0; i < scoreOrbList.size(); i++)
-	{
-		if (!SAT2D(&player.getPolygonN(), &scoreOrbList.at(i)->getPolygonN()) && player.getJumpState() == false)
-		{
-			scoreOrbList.erase(scoreOrbList.begin() + i);
-			score++;
-		}
-	}
-
-	for (int i = 0; i < enemyList.size(); i++)
-	{
-		int collideAllTest = 0;
 		for each (BlackHole* b in blackHoleList)
 		{
+			b->update(deltaT, prevDeltaT);
+		}
 
-			if (!SAT2D(&enemyList.at(i)->getPolygonN(), &b->getPolygonN()))
+		for each (JumpPad* j in jumpPadList)
+		{
+			j->update(deltaT, prevDeltaT);
+		}
+
+		for each (ShieldPickUp* s in shieldPickUpList)
+		{
+			s->update(deltaT, prevDeltaT);
+		}
+
+		for each (ScoreOrb* s in scoreOrbList)
+		{
+			s->update(deltaT, prevDeltaT);
+		}
+
+		for (int i = 0; i < enemyList.size() - 1; i++)
+		{
+			for (int j = i + 1; j < enemyList.size(); j++)
 			{
-				if (enemyList.at(i)->getSpeed() > 4)
-				{
-					enemyList.at(i)->setSpeed(enemyList.at(i)->getSpeed() - 0.5);
+				if (!SAT2D(&enemyList.at(i)->getPolygonN(), &enemyList.at(j)->getPolygonN())){
+					enemyList.at(i);
 				}
 			}
-			else {
-				collideAllTest++;
-			}
 		}
-		if (collideAllTest == blackHoleList.size()) {
-			enemyList.at(i)->setSpeed(enemyList.at(i)->getDefaultSpeed());
-		}
-	}
 
-	for (int i = 0; i < enemyList.size(); i++) {
-
-		if ((!SAT2D(&player.getPolygonN(), &enemyList.at(i)->getPolygonN())) && player.checkShouldColide() == false)
+		for each(JumpPad* p in jumpPadList)
 		{
-			if (player.getShieldState() == true) {
-				enemyList.at(i)->setSpeed(0);
-			}
-
-			if (player.getShieldState() == false) {
-				player.setRespawnState();
-				//enemyList.erase(enemyList.begin() + i);
-			}
-
-			if (enemyList.at(i)->getDeadState())
+			if (!SAT2D(&player.getPolygonN(), &p->getPolygonN()))
 			{
-				//enemyList.erase(enemyList.begin()+i);
+				player.setPlayerJumpOn();
 			}
 		}
-	}
 
-	if (player.getLivesCount() <= 0)
-	{
-		player.setDeadState(true);
-	}
-
-	if (player.getDeadState() == true)
-	{
-		if (player.getDeadStateTime() > TIME_TO_WAIT_AFTER_DEATH)
+		for each(BlackHole* b in blackHoleList)
 		{
-			app->setCurrentActivity(app->endScreen);
+			if (!SAT2D(&player.getPolygonN(), &b->getPolygonN()) && player.checkShouldColide() == false)
+			{
+				player.setBlackHoleSlowOn();
+			}
 		}
-		else {
-			std::cout << player.getDeadStateTime() << std::endl;
-			player.setDeadStateTime(player.getDeadStateTime() + 0.1);
-		}
-	}
 
-	if (score == numberOfScoreORbs)
-	{
-		score = (score * 10) / currentGameTime;
-		app->setCurrentActivity(app->endScreen);
+		for (int i = 0; i < shieldPickUpList.size(); i++)
+		{
+			if (!SAT2D(&player.getPolygonN(), &shieldPickUpList.at(i)->getPolygonN()) && player.getJumpState() == false)
+			{
+				player.shieldToggleOn();
+				shieldPickUpList.erase(shieldPickUpList.begin() + i);
+			}
+		}
+
+		for (int i = 0; i < scoreOrbList.size(); i++)
+		{
+			if (!SAT2D(&player.getPolygonN(), &scoreOrbList.at(i)->getPolygonN()) && player.getJumpState() == false)
+			{
+				scoreOrbList.erase(scoreOrbList.begin() + i);
+				OrbsPickedUp++;
+				score++;
+			}
+		}
+
+		for (int i = 0; i < enemyList.size(); i++)
+		{
+			int collideAllTest = 0;
+			for each (BlackHole* b in blackHoleList)
+			{
+
+				if (!SAT2D(&enemyList.at(i)->getPolygonN(), &b->getPolygonN()))
+				{
+					if (enemyList.at(i)->getSpeed() > 4)
+					{
+						enemyList.at(i)->setSpeed(enemyList.at(i)->getSpeed() - 0.5);
+					}
+				}
+				else {
+					collideAllTest++;
+				}
+			}
+			if (collideAllTest == blackHoleList.size()) {
+				enemyList.at(i)->setSpeed(enemyList.at(i)->getDefaultSpeed());
+			}
+		}
+
+		for (int i = 0; i < enemyList.size(); i++) {
+
+			if ((!SAT2D(&player.getPolygonN(), &enemyList.at(i)->getPolygonN())) && player.checkShouldColide() == false)
+			{
+				if (player.getShieldState() == true) {
+					enemyList.at(i)->setSpeed(0);
+				}
+
+				if (player.getShieldState() == false) {
+					player.setDamageState();
+					mainHUD.decreaseHealthTexture();
+					if (score > 0)
+					{
+						score--;
+					}
+					enemyList.erase(enemyList.begin() + i);
+				}
+			}
+		}
+
+		if (player.getHealthCount() <= 0)
+		{
+			player.setDeadState(true);
+		}
+
+		if (player.getDeadState() == true)
+		{
+			levelLost = true;
+		}
+
+		if (OrbsPickedUp == numberOfScoreOrbs)
+		{
+			score = (score * 10) / currentGameTime;
+			levelWon = true;
+		}
+		double dbl;
+
+		std::ostringstream strs;
+		strs << score;
+		scorestring = strs.str();
 	}
 	
 }
@@ -314,12 +340,11 @@ void GameActivity::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
-
-	glRotated(-camRot,0.0, 0.0, 1);
-	glTranslated(-camX, -camY, 0.0);
-
-	//renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);
 	
+	glRotated(-camRot, 0.0, 0.0, 1);
+	glTranslated(-camX, -camY, 0.0);
+	//renderDebugGrid(-100.0, -120.0, 400.0, 400.0, 30, 30);
+
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 20; j++) {
 			drawSquare(i, j, map[i][j]);
@@ -351,7 +376,19 @@ void GameActivity::render()
 		e->render();
 	}
 	player.render();
+	mainHUD.render();
 	
+	glPushMatrix();
+		glLoadIdentity();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_TEXTURE_2D);
+		myfont.Begin();
+		glColor4f(1.0f, 1.0f, 1.0f,1.0f);
+		myfont.DrawString("Score:" + scorestring, 0.1f, 37.0f, -33.3f);
+		glDisable(GL_BLEND);
+	glPopMatrix();
+
 	glFlush();
 }
 
@@ -385,6 +422,9 @@ void GameActivity::onKeyDown(int key)
 
 		app->setCurrentActivity(app->pauseScreen);
 	}
+	else if (key == VK_HOME) {
+		levelStart = false;
+	}
 	else if (key == VK_SPACE) {
 		player.boostToggleOn();
 	}
@@ -402,7 +442,6 @@ void GameActivity::renderDebugGrid(float left, float bottom, float width, float 
 	glColor3f(0.4f, 0.4f, 1.0f);
 	glBegin(GL_LINES);
 
-	// Vertical lines
 	float dx = width / hSegments;
 	float x = left;
 	for (int i = 0; i <= hSegments; i++)
@@ -412,7 +451,6 @@ void GameActivity::renderDebugGrid(float left, float bottom, float width, float 
 		x += dx;
 	}
 	
-	// Horizontal lines
 	float dy = height / vSegments;
 	float y = bottom;
 	for (int i = 0; i <= hSegments; i++)
@@ -479,22 +517,22 @@ void GameActivity::drawSquare(double posX, double posY, GLuint mapId) {
 		glColor3f(1.0f, 1.0f, 1.0f);
 
 		glTexCoord2f(0.0, 0);
-		glVertex2f(-4, -4);//bottom left
+		glVertex2f(-4, -4);
 
 		glTexCoord2f(1.0, 0);
-		glVertex2f(4, -4);//bottom right
+		glVertex2f(4, -4);
 
 		glTexCoord2f(0.0, 1.0);
-		glVertex2f(-4, 4);//top left
+		glVertex2f(-4, 4);
 
 		glTexCoord2f(1.0, 0);
-		glVertex2f(4, -4);//bottom right
+		glVertex2f(4, -4);
 
 		glTexCoord2f(1.0, 1.0);
-		glVertex2f(4, 4);//top right
+		glVertex2f(4, 4);
 
 		glTexCoord2f(0.0, 1.0);
-		glVertex2f(-4, 4);//top left
+		glVertex2f(-4, 4);
 	glEnd();
 
 	glPopMatrix();

@@ -10,9 +10,7 @@ class Collectable
 protected:
 	GLuint collectableTextureId;
 	double posX, posY, rot;
-	double size;
-	double height;
-	double width;
+	double size, height, width;
 	polygon objectPoly, objectPolyN;
 
 public:

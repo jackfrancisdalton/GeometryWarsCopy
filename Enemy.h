@@ -15,8 +15,7 @@ protected:
 	float textureX, textureY;
 	int refreshWait, refreshIndex;
 	int frameCounter;
-	double speed;
-	double defaultSpeed;
+	double speed, defaultSpeed;
 	polygon enemyPoly, enemyPolyN;
 	double enemySize = 1;
 	int id;
@@ -37,14 +36,11 @@ public:
 	virtual void initialise() = 0;		
 	virtual void BlackHoleCollisionOn();
 	virtual void BlackHoleCollisionOff();
-	// Called on application start up
-	virtual void shutdown();											// Called on application shut down
-	virtual void onSwitchIn();											// Activity switch in; called when the activity changes and this one switches in
+	virtual void shutdown();											
+	virtual void onSwitchIn();											
 	virtual void update(double deltaT, double prevDeltaT, double playerX, double playerY) = 0;
 	virtual void render() = 0;	
-	virtual int getId();// Render function
-
-	
+	virtual int getId();
 };
 
 #endif

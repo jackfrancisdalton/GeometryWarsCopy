@@ -1,23 +1,11 @@
-//
-// The structure of the Graphics 1 OpenGL template is explained in README.txt
-//
-#include <gl/gl.h>			// Header File For The OpenGL32 Library
+#include <gl/gl.h>			
 
 #include "Activity.h"
-
-
-// START SCREEN ACTIVITY
-// displays the image start_screen.png. Starts the game when SPACE is pressed
-
-// See StartScreenActivity.cpp for implementation
 
 class PauseScreenActivity : public Activity
 {
 private:
-	// We need a texture ID for our start screen texture
 	GLuint textureID;
-
-
 
 public:
 	PauseScreenActivity(OpenGLApplication *app);

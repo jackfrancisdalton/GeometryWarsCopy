@@ -15,15 +15,19 @@
 #include "Matrix.h"
 #include <vector>
 
+using namespace std;
+
+#include "glfont2.h"
+using namespace glfont;
 
 class GameActivity : public Activity
 {
 private:
 	double camX, camY, camRot;
 	double aspect;
-	double score;
+	double score, OrbsPickedUp;
 	double currentGameTime;
-	double numberOfScoreORbs = 10;
+	double numberOfScoreOrbs = 10;
 	std::vector<ScoreOrb*> scoreOrbList;
 	std::vector<JumpPad*> jumpPadList;
 	std::vector<BlackHole*> blackHoleList;
@@ -33,10 +37,13 @@ private:
 	HUD mainHUD;
 	GLuint healthIconTextureID, playerTextureID, spikeBallTextureID, shieldTextureID, shieldHitTextureID, spaceTextureID, cornerWall;
 	GLuint wallRightId, wallLeftId, wallBotId, wallTopId;
-	
+	GLFont myfont;
 	GLuint texture[2];
+	GLuint TESTFONT;
 	int mapWidth;
 	int mapHeight;
+
+	bool levelStart, levelLost, levelWon;
 
 public:
 	int chosenShipID;

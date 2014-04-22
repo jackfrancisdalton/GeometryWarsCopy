@@ -21,6 +21,7 @@
     <ClCompile Include="EnemyType2.cpp" />
     <ClCompile Include="EnemyType3.cpp" />
     <ClCompile Include="GameActivity.cpp" />
+    <ClCompile Include="glfont2.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="image_DXT.c" />
     <ClCompile Include="image_helper.c" />
@@ -51,6 +52,7 @@
     <ClInclude Include="EnemyType2.h" />
     <ClInclude Include="EnemyType3.h" />
     <ClInclude Include="GameActivity.h" />
+    <ClInclude Include="glfont2.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="image_DXT.h" />
     <ClInclude Include="image_helper.h" />

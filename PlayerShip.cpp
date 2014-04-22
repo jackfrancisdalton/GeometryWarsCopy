@@ -9,7 +9,7 @@
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
 #define ROTATION_SPIKE_BALL_SPEED 500.0
-#define RESPAWN_STATE_TIME 20.0
+#define RESPAWN_STATE_TIME 30.0
 #define JUMP_HEIGHT 2.5
 #define SHIELD_OSCILATION_SPEED 1.5
 #define SHIELD_GROWTH_RATE 1.0
@@ -20,30 +20,23 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 
-
-
 PlayerShip::PlayerShip()
 {
 }
 
 PlayerShip::PlayerShip(int shipID)
 {
-	deadState = false;
 	deadStateTime = 0.0;
-	playerX = 0.0;
-	playerY = 0.0;
-	rotateZ = 0.0;
-	boostOn = false;
+	playerX = playerY = rotateZ = 0.0;
 	jumpStage = 1.0;
 	falling = false;
-	jump = false;
-	shieldOn = false;
+	jump = shieldOn = deadState = boostOn = respawnState = damageState = false;
 	shieldTime = 0.0;
 	shieldScale = 0.0;
 	collisionWait = 0.0;
-	respawnState = false;
 	respawnTimer = 0.0;
 	lives = 3;
+	health = 4;
 	powerORBSize = 0.0;
 	powerORBMaxSize = 2.0;
 	powerORBTranslateY = 2.0;
@@ -54,17 +47,13 @@ PlayerShip::PlayerShip(int shipID)
 	acceleration = 0.01;
 	decceleration = 0.02;
 	shipChoice = shipID;
-	rocketFlamesScaleY = 0.0;
-	rocketFlamesScaleX = 0.0;
-	powerORBOn = false;
-	boostOn = false;
+	rocketFlamesScaleY = rocketFlamesScaleX = 0.0;
+	powerORBOn = boostOn = false;
 	directionChangeSpeed = 0.1;
 	respawnstateOpacity = 1.0;
 	playerPoly = polygon(4);
 	playerPolyN = polygon(4);
-	boosterR = 1.0;
-	boosterG = 1.0;
-	boosterB = 1.0;
+	boosterR = boosterG  = boosterB =  1.0;
 	shieldTimeLength = 0.0;
 	shieldTimeMax = 10.0;
 
@@ -122,7 +111,6 @@ void PlayerShip::initialise()
 		SOIL_CREATE_NEW_ID,										
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
-
 	playerPolyN.vert[0].x = playerPoly.vert[0].x = -2;
 	playerPolyN.vert[0].y = playerPoly.vert[0].y = -2;
 	playerPolyN.vert[1].x = playerPoly.vert[1].x = 2;
@@ -136,6 +124,10 @@ void PlayerShip::initialise()
 void PlayerShip::shutdown()
 {
 	glDeleteTextures(1, &playerTextureID);
+	glDeleteTextures(1, &spikeBallTextureID);
+	glDeleteTextures(1, &rocketBooster);
+	glDeleteTextures(1, &shieldTextureID);
+	glDeleteTextures(1, &shieldHitTextureID);
 }
 
 void PlayerShip::onSwitchIn()
@@ -298,7 +290,6 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 	}
 
 	//*****************************************************POWER UPS
-
 	if (shieldOn == true)
 	{
 		if (shieldTimeLength < shieldTimeMax)
@@ -310,7 +301,6 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 			shieldTimeLength = 0;
 		}	
 	}
-
 
 	if(powerORBOn == true) {
 		powerORBRotate += (ROTATION_SPIKE_BALL_SPEED * deltaT);
@@ -347,10 +337,11 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 	}
 
 	//****************************************RESPAWN/DEATH STATE
-	if (respawnState == true) {
-		respawnTimer += 0.1;
+	if (respawnState == true || damageState == true) {
+		respawnTimer += 0.05;
 		if (respawnTimer > RESPAWN_STATE_TIME) {
 			respawnState = false;
+			damageState = false;
 			respawnTimer = 0.0;
 			respawnstateOpacity = 1.0;
 		}
@@ -585,7 +576,6 @@ void PlayerShip::setBlackHoleSlowOn() {
 	else if (currentSpeed < -2) {
 		currentSpeed = currentSpeed + 0.3;
 	}
-
 }
 
 double PlayerShip::getPlayerRot() {
@@ -606,7 +596,7 @@ double PlayerShip::getCollisionWait() {
 
 bool PlayerShip::checkShouldColide() {
 
-	if (respawnState == true || jump == true) {
+	if (respawnState == true || jump == true || damageState == true) {
 		return true;
 	}
 	return false;
@@ -639,6 +629,20 @@ void PlayerShip::setRespawnState() {
 	if (lives > 0) {
 		lives--;
 	}
+}
+
+void PlayerShip::setDamageState()
+{
+	damageState = true;
+	currentSpeed = 0;
+	if (health > 0)
+	{
+		health--;
+	}
+}
+
+int PlayerShip::getHealthCount() {
+	return health;
 }
 
 int PlayerShip::getLivesCount() {

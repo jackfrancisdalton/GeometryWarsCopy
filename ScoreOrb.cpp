@@ -30,14 +30,17 @@ void ScoreOrb::initialise()
 	posX = (rand() % 10 - 5) * 10;
 	posY = (rand() % 10 - 5) * 10;
 
-	objectPolyN.vert[0].x = objectPoly.vert[0].x = -size/2;
-	objectPolyN.vert[0].y = objectPoly.vert[0].y = -size/2;
-	objectPolyN.vert[1].x = objectPoly.vert[1].x = size/2;
-	objectPolyN.vert[1].y = objectPoly.vert[1].y = -size/2;
-	objectPolyN.vert[2].x = objectPoly.vert[2].x = size/2;
-	objectPolyN.vert[2].y = objectPoly.vert[2].y = size/2;
-	objectPolyN.vert[3].x = objectPoly.vert[3].x = -size/2;
-	objectPolyN.vert[3].y = objectPoly.vert[3].y = size/2;
+	int minus = -size / 2;
+	int positive = size / 2;
+
+	objectPolyN.vert[0].x = objectPoly.vert[0].x = minus;
+	objectPolyN.vert[0].y = objectPoly.vert[0].y = minus;
+	objectPolyN.vert[1].x = objectPoly.vert[1].x = positive;
+	objectPolyN.vert[1].y = objectPoly.vert[1].y = minus;
+	objectPolyN.vert[2].x = objectPoly.vert[2].x = positive;
+	objectPolyN.vert[2].y = objectPoly.vert[2].y = positive;
+	objectPolyN.vert[3].x = objectPoly.vert[3].x = minus;
+	objectPolyN.vert[3].y = objectPoly.vert[3].y = positive;
 }
 
 void ScoreOrb::update(double deltaT, double prevDeltaT)
