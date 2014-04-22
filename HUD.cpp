@@ -20,12 +20,16 @@
 #endif
 #define DEG_2_RAD(x) (x * M_PI / 180.0)
 
+using namespace glfont;
+
 HUD::HUD(double x, double y)
 {
+	gameTime = 0;
 	posX = x;
 	posY = y;
 	texY1 = 1.0;
 	texY2 = 0.8;
+	SgameTime = "";
 }
 
 HUD::HUD(){}
@@ -36,6 +40,11 @@ void HUD::initialise()
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+
+	gameTime = 0;
+
+	glGenTextures(1, &FONTTEXTURE);
+	HUDFont.Create("Arial.glf", FONTTEXTURE);
 }
 
 void HUD::setPosition(double x, double y) {
@@ -72,7 +81,13 @@ void HUD::shutdown()
 
 void HUD::update(double deltaT, double prevDeltaT, InputState *inputState)
 {
+	gameTime += 0.1;
 
+	SgameTime = "asdas";
+
+	std::ostringstream strs;
+	strs << gameTime;
+	SgameTime = strs.str();
 }
 
 void HUD::render()
@@ -111,6 +126,40 @@ void HUD::render()
 
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+
+	glPushMatrix();
+		glLoadIdentity();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_TEXTURE_2D);
+		HUDFont.Begin();
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		HUDFont.DrawString(SgameTime, 0.5f, -20.0f, -10.3f);
+		glDisable(GL_BLEND);
+	glPopMatrix();
+
+	glPushMatrix();
+		glLoadIdentity();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_TEXTURE_2D);
+		HUDFont.Begin();
+		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		HUDFont.DrawString(SgameTime, 0.5f, 20.0f, 10.3f);
+		glDisable(GL_BLEND);
+	glPopMatrix();
+
+
+	glPushMatrix();
+		glLoadIdentity();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_TEXTURE_2D);
+		HUDFont.Begin();
+		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		HUDFont.DrawString("Time", 0.5f, 37.0f, 0.3f);
+		glDisable(GL_BLEND);
 	glPopMatrix();
 }
 

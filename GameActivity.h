@@ -17,9 +17,6 @@
 
 using namespace std;
 
-#include "glfont2.h"
-using namespace glfont;
-
 class GameActivity : public Activity
 {
 private:
@@ -37,7 +34,6 @@ private:
 	HUD mainHUD;
 	GLuint healthIconTextureID, playerTextureID, spikeBallTextureID, shieldTextureID, shieldHitTextureID, spaceTextureID, cornerWall;
 	GLuint wallRightId, wallLeftId, wallBotId, wallTopId;
-	GLFont myfont;
 	GLuint texture[2];
 	GLuint TESTFONT;
 	int mapWidth;

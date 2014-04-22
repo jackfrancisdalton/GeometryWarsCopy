@@ -49,8 +49,6 @@ char map[20][20] = {
 	{ 5, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5 },
 };
 
-string scorestring = "";
-
 GameActivity::GameActivity(OpenGLApplication *app): Activity(app)	
 {
 	currentGameTime = 0.0;
@@ -62,17 +60,17 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 	OrbsPickedUp = 0;
 	numberOfScoreOrbs = 3;
 	
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 3; i++) {
 		EnemyType1* e = new EnemyType1();
 		enemyList.push_back(e);
 	}
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 3; i++) {
 		EnemyType2* e = new EnemyType2();
 		enemyList.push_back(e);
 	}
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 3; i++) {
 		EnemyType3* e = new EnemyType3();
 		enemyList.push_back(e);
 	}
@@ -111,9 +109,6 @@ void GameActivity::initialise()
 {
 	AllocConsole();
 	freopen("CONOUT$", "w", stdout);
-
-	glGenTextures(1, &TESTFONT);
-	myfont.Create("Arial.glf", TESTFONT);
 	
 	player = PlayerShip(chosenShipID);
 	player.initialise();
@@ -196,13 +191,15 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 		mainHUD.setPosition(VIEW_SIZE*0.5*aspect, -VIEW_SIZE*0.5);
 		currentGameTime += 1 * deltaT;
 		player.update(deltaT, prevDeltaT, inputState);
+
+		//IF OPTION 1 IS ACTIVE ELSE OPTION 2
 		camRot = player.getPlayerRot();
 		camX = player.getPlayerX();
 		camY = player.getPlayerY();
 
 		for each (Enemy* e in enemyList)
 		{
-			e->update(deltaT, prevDeltaT, camX, camY);
+			e->update(deltaT, prevDeltaT, player.getPlayerX(), player.getPlayerY());
 		}
 
 		for each (BlackHole* b in blackHoleList)
@@ -327,13 +324,9 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 			score = (score * 10) / currentGameTime;
 			levelWon = true;
 		}
-		double dbl;
 
-		std::ostringstream strs;
-		strs << score;
-		scorestring = strs.str();
+		mainHUD.update(deltaT, prevDeltaT, inputState);
 	}
-	
 }
 
 void GameActivity::render()
@@ -377,17 +370,6 @@ void GameActivity::render()
 	}
 	player.render();
 	mainHUD.render();
-	
-	glPushMatrix();
-		glLoadIdentity();
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_TEXTURE_2D);
-		myfont.Begin();
-		glColor4f(1.0f, 1.0f, 1.0f,1.0f);
-		myfont.DrawString("Score:" + scorestring, 0.1f, 37.0f, -33.3f);
-		glDisable(GL_BLEND);
-	glPopMatrix();
 
 	glFlush();
 }

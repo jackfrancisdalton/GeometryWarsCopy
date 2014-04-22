@@ -35,7 +35,6 @@ PlayerShip::PlayerShip(int shipID)
 	shieldScale = 0.0;
 	collisionWait = 0.0;
 	respawnTimer = 0.0;
-	lives = 3;
 	health = 4;
 	powerORBSize = 0.0;
 	powerORBMaxSize = 2.0;
@@ -623,14 +622,6 @@ void PlayerShip::powerBallToggle() {
 	powerORBOn = !powerORBOn;
 }
 
-void PlayerShip::setRespawnState() {
-	respawnState = true;
-	currentSpeed = 0; 
-	if (lives > 0) {
-		lives--;
-	}
-}
-
 void PlayerShip::setDamageState()
 {
 	damageState = true;
@@ -643,10 +634,6 @@ void PlayerShip::setDamageState()
 
 int PlayerShip::getHealthCount() {
 	return health;
-}
-
-int PlayerShip::getLivesCount() {
-	return lives;
 }
 
 void PlayerShip::wallCollisionHandeling()
