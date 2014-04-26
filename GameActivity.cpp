@@ -1,3 +1,4 @@
+#pragma comment (lib, "winmm.lib")
 #include <windows.h>		// Header File For Windows
 #include <gl\gl.h>		// Header File For The OpenGL32 Library
 #include <gl\glu.h>			// Header File For The GLu32 Library
@@ -59,6 +60,7 @@ GameActivity::GameActivity(OpenGLApplication *app): Activity(app)
 	mapHeight = 20;
 	OrbsPickedUp = 0;
 	numberOfScoreOrbs = 3;
+	rotateCamera = false;
 	
 	for (int i = 0; i < 3; i++) {
 		EnemyType1* e = new EnemyType1();
@@ -176,15 +178,15 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 
 	if (levelStart == true)
 	{
-
+		mainHUD.setMainMessage("message start");
 	}
 	else if (levelLost == true)
 	{
-		
+		mainHUD.setMainMessage("message Lost");
 	}
 	else if (levelWon == true)
 	{
-		
+		mainHUD.setMainMessage("message Won");
 	}
 	else
 	{
@@ -193,7 +195,15 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 		player.update(deltaT, prevDeltaT, inputState);
 
 		//IF OPTION 1 IS ACTIVE ELSE OPTION 2
-		camRot = player.getPlayerRot();
+		if (rotateCamera == false) 
+		{
+			camRot = 0;
+		}
+		else 
+		{
+			camRot = player.getPlayerRot();
+		}
+		
 		camX = player.getPlayerX();
 		camY = player.getPlayerY();
 
@@ -264,8 +274,19 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 				scoreOrbList.erase(scoreOrbList.begin() + i);
 				OrbsPickedUp++;
 				score++;
+				
+				if (OrbsPickedUp == numberOfScoreOrbs)
+				{
+					PlaySound("complete.wav", NULL, SND_ASYNC);
+				}
+				else 
+				{
+					PlaySound("off.wav", NULL, SND_ASYNC);
+				}
 			}
 		}
+
+		mainHUD.update(deltaT, prevDeltaT, inputState, score);
 
 		for (int i = 0; i < enemyList.size(); i++)
 		{
@@ -319,13 +340,26 @@ void GameActivity::update(double deltaT, double prevDeltaT)
 			levelLost = true;
 		}
 
-		if (OrbsPickedUp == numberOfScoreOrbs)
+		if (OrbsPickedUp == numberOfScoreOrbs - 3)
 		{
-			score = (score * 10) / currentGameTime;
-			levelWon = true;
+			mainHUD.setPopUpMessage("3 orb left!");
 		}
 
-		mainHUD.update(deltaT, prevDeltaT, inputState);
+		if (OrbsPickedUp == numberOfScoreOrbs - 2)
+		{
+			mainHUD.setPopUpMessage("2 orb left!");
+		}
+
+		if (OrbsPickedUp == numberOfScoreOrbs - 1)
+		{
+			mainHUD.setPopUpMessage("1 orb left!");
+		}
+
+		if (OrbsPickedUp == numberOfScoreOrbs)
+		{
+			//score = (score * 10) / currentGameTime;
+			levelWon = true;
+		}
 	}
 }
 
@@ -406,9 +440,13 @@ void GameActivity::onKeyDown(int key)
 	}
 	else if (key == VK_HOME) {
 		levelStart = false;
+		mainHUD.setMainMessage("");
 	}
 	else if (key == VK_SPACE) {
 		player.boostToggleOn();
+	}
+	else if (key == VK_END) {
+		rotateCamera = !rotateCamera;
 	}
 }
 

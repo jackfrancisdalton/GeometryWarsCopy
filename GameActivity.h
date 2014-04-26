@@ -25,6 +25,7 @@ private:
 	double score, OrbsPickedUp;
 	double currentGameTime;
 	double numberOfScoreOrbs = 10;
+	bool rotateCamera;
 	std::vector<ScoreOrb*> scoreOrbList;
 	std::vector<JumpPad*> jumpPadList;
 	std::vector<BlackHole*> blackHoleList;

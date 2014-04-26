@@ -8,6 +8,7 @@
 #include <string>		
 #include <sstream>
 
+
 #define VIEW_SIZE 50.0
 #define CAMERA_MOVEMENT_SPEED 10.0
 #define PLAYER_MOVEMENT_SPEED 10.0
@@ -24,12 +25,14 @@ using namespace glfont;
 
 HUD::HUD(double x, double y)
 {
-	gameTime = 0;
 	posX = x;
 	posY = y;
 	texY1 = 1.0;
 	texY2 = 0.8;
 	SgameTime = "";
+	Sscore = "";
+	MainMessage = "";
+	PopUpMessage = "";
 }
 
 HUD::HUD(){}
@@ -51,6 +54,15 @@ void HUD::setPosition(double x, double y) {
 	posX = x;
 	posY = y;
 }
+
+void HUD::setPopUpMessage(std::string message) {
+	PopUpMessage = message;
+}
+
+void HUD::setMainMessage(std::string message) {
+	MainMessage = message;
+}
+
 
 void HUD::increaseHealthTexture()
 {
@@ -79,21 +91,42 @@ void HUD::shutdown()
 	
 }
 
-void HUD::update(double deltaT, double prevDeltaT, InputState *inputState)
+void HUD::update(double deltaT, double prevDeltaT, InputState *inputState, int score)
 {
-	gameTime += 0.1;
-
-	SgameTime = "asdas";
-
+	gameTime += 2 * deltaT;
 	std::ostringstream strs;
-	strs << gameTime;
+
+	if (((int)(gameTime / 60) % 60) < 10)
+	{
+		strs << "0";
+		strs << (int)(gameTime / 60) % 60;
+	}
+	else
+	{
+		strs << (int)(gameTime / 60) % 60;
+	}
+
+	strs << ":";
+
+	if (((int)gameTime % 60) < 10)
+	{
+		strs << "0";
+		strs << (int)gameTime % 60;
+	}
+	else
+	{
+		strs << (int)gameTime % 60;
+	}
 	SgameTime = strs.str();
+
+	std::ostringstream strs2;
+	strs2 << "Score: ";
+	strs2 << score;
+	Sscore = strs2.str();
 }
 
 void HUD::render()
 {
-	//glPrint("Bitmap Text fififi A Number: ");
-	//*******************************HUD HEART 1
 	glPushMatrix();
 	glLoadIdentity();
 	glTranslated(posX - 16.0, posY + 5.0, 1.0);
@@ -135,18 +168,7 @@ void HUD::render()
 		glEnable(GL_TEXTURE_2D);
 		HUDFont.Begin();
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		HUDFont.DrawString(SgameTime, 0.5f, -20.0f, -10.3f);
-		glDisable(GL_BLEND);
-	glPopMatrix();
-
-	glPushMatrix();
-		glLoadIdentity();
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_TEXTURE_2D);
-		HUDFont.Begin();
-		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
-		HUDFont.DrawString(SgameTime, 0.5f, 20.0f, 10.3f);
+		HUDFont.DrawString(SgameTime, 0.2f, -7.0f, 40.0f);
 		glDisable(GL_BLEND);
 	glPopMatrix();
 
@@ -157,12 +179,33 @@ void HUD::render()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_TEXTURE_2D);
 		HUDFont.Begin();
-		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
-		HUDFont.DrawString("Time", 0.5f, 37.0f, 0.3f);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		HUDFont.DrawString(Sscore, 0.2f, -20.0f, -20.3f);
+		glDisable(GL_BLEND);
+	glPopMatrix();
+
+	glPushMatrix();
+		glLoadIdentity();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_TEXTURE_2D);
+		HUDFont.Begin();
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		HUDFont.DrawString(PopUpMessage, 0.1f, -20.0f, -10.3f);
+		glDisable(GL_BLEND);
+	glPopMatrix();
+
+	glPushMatrix();
+		glLoadIdentity();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_TEXTURE_2D);
+		HUDFont.Begin();
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		HUDFont.DrawString(MainMessage, 0.2f, -10.0f, 0.0f);
 		glDisable(GL_BLEND);
 	glPopMatrix();
 }
-
 
 void HUD::glPrint(std::string str)						// Custom GL "Print" Routine
 {

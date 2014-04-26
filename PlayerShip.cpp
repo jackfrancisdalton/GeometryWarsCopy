@@ -139,7 +139,7 @@ void PlayerShip::update(double deltaT, double prevDeltaT, InputState *inputState
 	double playerDirSin = sin(DEG_2_RAD(-rotateZ));
 	double playerDirCos = cos(DEG_2_RAD(-rotateZ));
 
-	if(inputState->isKeyPressed('W'))
+	if (inputState->isKeyPressed('W') || inputState->isKeyPressed('UP'))
 	{
 		if (currentSpeed > 0) 
 		{

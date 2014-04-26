@@ -11,6 +11,9 @@ private:
 	double posX, posY, rot, texY1, texY2;
 	double gameTime;
 	std::string SgameTime;
+	std::string Sscore;
+	std::string MainMessage;
+	std::string PopUpMessage;
 	bool gamePaused;
 	int score;
 	GLuint base;
@@ -26,8 +29,10 @@ public:
 	virtual void increaseHealthTexture();
 	virtual void initialise();											// Called on application start up
 	virtual void shutdown();											// Called on application shut down
-	virtual void update(double deltaT, double prevDeltaT, InputState *inputState);
+	virtual void update(double deltaT, double prevDeltaT, InputState *inputState, int score);
 	virtual void render();												// Render function
 	virtual void setPosition(double posX, double posY);
+	virtual void setMainMessage(std::string message);
+	virtual void setPopUpMessage(std::string message);
 	void glutBitmapCharacter(void *font, int character);
 };
